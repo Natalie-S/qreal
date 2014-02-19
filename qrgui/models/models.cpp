@@ -22,6 +22,37 @@ Models::Models(QString const &workingCopy, EditorManagerInterface &editorManager
 
 	mLogicalModel->connectToGraphicalModel(mGraphicalModel);
 	mGraphicalModel->connectToLogicalModel(mLogicalModel);
+
+    QMessageBox msgBox;
+    msgBox.setText("Choose the role");
+    msgBox.setInformativeText("By default Server role will be chosen");
+    msgBox.setStandardButtons(QMessageBox::Ok | QMessageBox::Cancel);
+    msgBox.setDefaultButton(QMessageBox::Ok);
+    int ret = msgBox.exec();
+
+    switch (ret) {
+       case QMessageBox::Ok:
+    {
+        mServer = new Server();
+        mServer->listen();
+    }
+        break;
+       case QMessageBox::Cancel:
+    {
+        mClient = new Client();
+        mClient->connectToServer();
+        QObject::connect(mLogicalModel, SIGNAL(dataChanged(QModelIndex,QModelIndex)),mClient, SLOT(onDataChanged()));
+    }
+           break;
+       default:
+           // should never be reached
+           break;
+     }
+
+    /*mClient = new Client();
+    mClient->connectToServer();
+
+    QObject::connect(mLogicalModel, SIGNAL(dataChanged(QModelIndex,QModelIndex)),mClient, SLOT(onDataChanged()));*/
 }
 
 Models::~Models()

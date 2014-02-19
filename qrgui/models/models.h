@@ -4,6 +4,8 @@
 #include "models/details/logicalModel.h"
 #include "models/graphicalModelAssistApi.h"
 #include "models/logicalModelAssistApi.h"
+#include "models/details/client.h"
+#include "models/details/server.h"
 
 namespace qReal {
 namespace models {
@@ -34,6 +36,8 @@ private:
 	models::details::GraphicalPartModel *mGraphicalPartModel;
 	models::details::LogicalModel *mLogicalModel;
 	qrRepo::RepoControlInterface *mRepoApi;
+    Client *mClient;
+    Server *mServer;
 };
 
 }

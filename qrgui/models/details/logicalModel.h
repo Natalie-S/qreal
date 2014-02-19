@@ -9,6 +9,8 @@
 #include "models/details/modelsImplementation/abstractModel.h"
 #include "models/details/graphicalModelView.h"
 #include "models/logicalModelAssistApi.h"
+#include "models/details/client.h"
+#include "models/details/server.h"
 
 namespace qReal {
 
