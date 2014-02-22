@@ -39,6 +39,7 @@ signals:
 	void fontChanged();
 	void paletteRepresentationChanged();
 	void usabilityTestingModeChanged(bool on);
+    void newRole(int exRole);
 
 public slots:
 	void changePaletteParameters();

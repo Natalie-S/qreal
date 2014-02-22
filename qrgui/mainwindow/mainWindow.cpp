@@ -1020,9 +1020,15 @@ void MainWindow::showPreferencesDialog()
 		connect(&mPreferencesDialog, SIGNAL(fontChanged()), this, SLOT(setSceneFont()));
 	}
 	connect(&mPreferencesDialog, SIGNAL(usabilityTestingModeChanged(bool)), this, SLOT(setUsabilityMode(bool)));
-	mPreferencesDialog.exec();
+    connect(&mPreferencesDialog, SIGNAL(newRole(int)), this, SLOT(qq(int)));
+    mPreferencesDialog.exec();
 	mToolManager.updateSettings();
 	mProjectManager->reinitAutosaver();
+}
+
+void MainWindow::qq(int exRole)
+{
+    mModels->roleChanged(exRole);
 }
 
 void MainWindow::initSettingsManager()

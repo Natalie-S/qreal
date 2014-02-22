@@ -15,8 +15,9 @@ PreferencesMiscellaniousPage::PreferencesMiscellaniousPage(QWidget *parent)
 
 	connect(mUi->imagesPathBrowseButton, SIGNAL(clicked()), this, SLOT(browseImagesPath()));
 
-	mUi->colorComboBox->addItems(QColor::colorNames());
+    mUi->colorComboBox->addItems(QColor::colorNames());
 
+    mExRole = 0;
 	restoreSettings();
 }
 
@@ -54,6 +55,16 @@ void PreferencesMiscellaniousPage::save()
 	SettingsManager::setValue("PaintOldEdgeMode", mUi->paintOldLineCheckBox->isChecked());
 	SettingsManager::setValue("oldLineColor", mUi->colorComboBox->currentText());
 
+    int curRole = mExRole;
+    if(mUi->clientRole->isChecked()) {curRole = 1;}
+    else if (mUi->serverRole->isChecked()) {curRole = 2;}
+    else if(mUi->standAloneRole->isChecked()) {curRole = 0;}
+    SettingsManager::setValue("role",  curRole);
+    if(curRole != mExRole) {
+        emit newRole(mExRole);
+        mExRole = curRole;
+    }
+
 	if (mLastIconsetPath != mUi->imagesPathEdit->text()) {
 		emit iconsetChanged();
 	}
@@ -70,6 +81,5 @@ void PreferencesMiscellaniousPage::restoreSettings()
 	int curColorIndex = mUi->colorComboBox->findText(curColor);
 	mUi->colorComboBox->setCurrentIndex(curColorIndex);
 
-	mLastIconsetPath = SettingsManager::value("pathToImages").toString();
-	mUi->imagesPathEdit->setText(mLastIconsetPath);
+    mLastIconsetPath = SettingsManager::value("pathToImages").toString();
 }

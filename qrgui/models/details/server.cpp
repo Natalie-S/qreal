@@ -10,6 +10,10 @@ void Server::listen() {
     mServer->listen(QHostAddress::LocalHost, 1234);
 }
 
+void Server::close() {
+    mServer->close();
+}
+
 void Server::onNewConnection() {
     mSocket = mServer->nextPendingConnection();
     if(mSocket->state() == QTcpSocket::ConnectedState) {

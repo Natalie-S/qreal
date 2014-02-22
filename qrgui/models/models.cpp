@@ -1,5 +1,7 @@
 #include "models.h"
 
+//#include "dialogs/preferencesPages/miscellaniousPage.h"
+
 using namespace qReal;
 using namespace models;
 
@@ -21,38 +23,9 @@ Models::Models(QString const &workingCopy, EditorManagerInterface &editorManager
 	mRepoApi = repoApi;
 
 	mLogicalModel->connectToGraphicalModel(mGraphicalModel);
-	mGraphicalModel->connectToLogicalModel(mLogicalModel);
+    mGraphicalModel->connectToLogicalModel(mLogicalModel);
 
-    QMessageBox msgBox;
-    msgBox.setText("Choose the role");
-    msgBox.setInformativeText("By default Server role will be chosen");
-    msgBox.setStandardButtons(QMessageBox::Ok | QMessageBox::Cancel);
-    msgBox.setDefaultButton(QMessageBox::Ok);
-    int ret = msgBox.exec();
-
-    switch (ret) {
-       case QMessageBox::Ok:
-    {
-        mServer = new Server();
-        mServer->listen();
-    }
-        break;
-       case QMessageBox::Cancel:
-    {
-        mClient = new Client();
-        mClient->connectToServer();
-        QObject::connect(mLogicalModel, SIGNAL(dataChanged(QModelIndex,QModelIndex)),mClient, SLOT(onDataChanged()));
-    }
-           break;
-       default:
-           // should never be reached
-           break;
-     }
-
-    /*mClient = new Client();
-    mClient->connectToServer();
-
-    QObject::connect(mLogicalModel, SIGNAL(dataChanged(QModelIndex,QModelIndex)),mClient, SLOT(onDataChanged()));*/
+    qDebug() << "init role" << SettingsManager::value("role");
 }
 
 Models::~Models()
@@ -60,6 +33,56 @@ Models::~Models()
 	delete mGraphicalModel;
 	delete mLogicalModel;
 	delete mRepoApi;
+}
+
+void Models::roleChanged(int exRole)
+{
+    switch(exRole) {
+    case 1:
+    {
+        QObject::disconnect(mLogicalModel, SIGNAL(dataChanged(QModelIndex,QModelIndex)),mClient, SLOT(onDataChanged()));
+        mClient->disconnectFromServer();
+        qDebug() << "I'm not a Client any more!";
+    }
+        break;
+    case 2:
+    {
+        mServer->close();
+        qDebug() << "I'm not a Server any more!";
+    }
+        break;
+    default:
+        break;
+    }
+    int role = SettingsManager::value("role").toInt();
+    qDebug() << "roleChanged " << role;
+    switch(role) {
+    case 0:
+        break;
+    case 1:
+        makeItClient();
+        break;
+    case 2:
+        makeItServer();
+        break;
+    default:
+        break;
+    }
+}
+
+void Models::makeItClient()
+{
+    qDebug() << "I'm a client!";
+    mClient = new Client();
+    mClient->connectToServer();
+    QObject::connect(mLogicalModel, SIGNAL(dataChanged(QModelIndex,QModelIndex)),mClient, SLOT(onDataChanged()));
+}
+
+void Models::makeItServer()
+{
+    qDebug() << "I'm a server!";
+    mServer = new Server();
+    mServer->listen();
 }
 
 QAbstractItemModel* Models::graphicalModel() const

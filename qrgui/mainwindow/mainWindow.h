@@ -280,6 +280,7 @@ private slots:
 	void openShapeEditor();
 
 	void updatePaletteIcons();
+    void qq(int exRole);
 	void setTextChanged(bool changed);
 
 	void setUsabilityMode(bool mode);

@@ -12,7 +12,8 @@ class Client : public QObject
     Q_OBJECT
     public:
         explicit Client(QObject *parent = 0);
-        void connectToServer();
+        void connectToServer();        
+        void disconnectFromServer();
     signals:
 
     public slots:

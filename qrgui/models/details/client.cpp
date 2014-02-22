@@ -31,3 +31,7 @@ void Client::onDataChanged() {
 void Client::connectToServer() {
     mSocket->connectToHost(QHostAddress::LocalHost, 1234);
 }
+
+void Client::disconnectFromServer() {
+    mSocket->disconnectFromHost();
+}

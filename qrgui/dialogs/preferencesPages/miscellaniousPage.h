@@ -1,6 +1,7 @@
 #pragma once
 
 #include "dialogs/preferencesPages/preferencesPage.h"
+#include "models/models.h"
 
 namespace Ui {
 	class PreferencesMiscellaniousPage;
@@ -19,6 +20,7 @@ public:
 
 signals:
 	void iconsetChanged();
+    void newRole(int exRole);
 
 protected:
 	void changeEvent(QEvent *e);
@@ -30,4 +32,6 @@ private:
 	Ui::PreferencesMiscellaniousPage *mUi;
 
 	QString mLastIconsetPath;
+
+    int mExRole;
 };

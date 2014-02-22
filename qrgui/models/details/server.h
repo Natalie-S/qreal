@@ -18,6 +18,7 @@ class Server : public QObject
 public:
     explicit Server(QObject *parent = 0);
     void listen();
+    void close();
 
 signals:
 

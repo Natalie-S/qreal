@@ -30,6 +30,11 @@ public:
 	qrRepo::GraphicalRepoApi const &graphicalRepoApi() const;
 
 	void reinit();
+    void makeItClient();
+    void makeItServer();
+
+public slots:
+    void roleChanged(int exRole);
 
 private:
 	models::details::GraphicalModel *mGraphicalModel;
