@@ -24,12 +24,19 @@ void Client::onDataChanged() {
     buffer[3] = '\0';
 //    mSocket->write("Data changed\n");
 //    mSocket->write('\0');
+//    buffer = isSentByLogicalModel + "dc";
+//    int len = strlen(buffer);
+//    buffer[len] = '\n';
+//    buffer[len + 1] = '\0';
     mSocket->write(buffer);
     mSocket->flush();
 }
 
-void Client::connectToServer() {
-    mSocket->connectToHost(QHostAddress::LocalHost, 1234);
+void Client::connectToServer(QString addr) {
+    QHostAddress hostAddress = QHostAddress(addr);
+    //mSocket->connectToHost(QHostAddress::LocalHost, 1234);
+    mSocket->connectToHost(hostAddress, 1234);
+
 }
 
 void Client::disconnectFromServer() {

@@ -13,34 +13,34 @@ namespace models {
 class Models
 {
 public:
-	explicit Models(QString const &workingCopy, EditorManagerInterface &editorManager);
-	~Models();
+    explicit Models(QString const &workingCopy, EditorManagerInterface &editorManager);
+    ~Models();
 
-	QAbstractItemModel *graphicalModel() const;
-	QAbstractItemModel *logicalModel() const;
+    QAbstractItemModel *graphicalModel() const;
+    QAbstractItemModel *logicalModel() const;
 
-	GraphicalModelAssistApi &graphicalModelAssistApi() const;
-	LogicalModelAssistApi &logicalModelAssistApi() const;
+    GraphicalModelAssistApi &graphicalModelAssistApi() const;
+    LogicalModelAssistApi &logicalModelAssistApi() const;
 
-	qrRepo::RepoControlInterface &repoControlApi() const;
+    qrRepo::RepoControlInterface &repoControlApi() const;
 
-	qrRepo::LogicalRepoApi const &logicalRepoApi() const;
-	qrRepo::LogicalRepoApi &mutableLogicalRepoApi() const;
+    qrRepo::LogicalRepoApi const &logicalRepoApi() const;
+    qrRepo::LogicalRepoApi &mutableLogicalRepoApi() const;
 
-	qrRepo::GraphicalRepoApi const &graphicalRepoApi() const;
+    qrRepo::GraphicalRepoApi const &graphicalRepoApi() const;
 
-	void reinit();
-    void makeItClient();
+    void reinit();
+    void makeItClient(QString addr);
     void makeItServer();
 
 public slots:
-    void roleChanged(int exRole);
+    void roleChanged(int exRole, QString addr);
 
 private:
-	models::details::GraphicalModel *mGraphicalModel;
-	models::details::GraphicalPartModel *mGraphicalPartModel;
-	models::details::LogicalModel *mLogicalModel;
-	qrRepo::RepoControlInterface *mRepoApi;
+    models::details::GraphicalModel *mGraphicalModel;
+    models::details::GraphicalPartModel *mGraphicalPartModel;
+    models::details::LogicalModel *mLogicalModel;
+    qrRepo::RepoControlInterface *mRepoApi;
     Client *mClient;
     Server *mServer;
 };
