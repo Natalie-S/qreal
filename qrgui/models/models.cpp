@@ -1,7 +1,5 @@
 #include "models.h"
 
-//#include "dialogs/preferencesPages/miscellaniousPage.h"
-
 using namespace qReal;
 using namespace models;
 
@@ -25,7 +23,9 @@ Models::Models(QString const &workingCopy, EditorManagerInterface &editorManager
     mLogicalModel->connectToGraphicalModel(mGraphicalModel);
     mGraphicalModel->connectToLogicalModel(mLogicalModel);
 
-    //qDebug() << "init role" << SettingsManager::value("role");
+    qDebug() << "init role" << SettingsManager::value("role").toInt();
+
+    QObject::connect(mLogicalModel, SIGNAL(elementAdded(QString,QString,QString,QString,QPointF)), mClient, SLOT(onElementAdded(QString,QString,QString,QString,QPointF)));
 }
 
 Models::~Models()
@@ -40,8 +40,9 @@ void Models::roleChanged(int exRole, QString addr)
     switch(exRole) {
     case 1:
     {
-        QObject::disconnect(mLogicalModel, SIGNAL(dataChanged(QModelIndex,QModelIndex)),mClient, SLOT(onDataChanged()));
-        QObject::disconnect(mGraphicalModel, SIGNAL(dataChanged(QModelIndex,QModelIndex)),mClient, SLOT(onDataChanged()));
+        //QObject::disconnect(mLogicalModel, SIGNAL(dataChanged(QModelIndex,QModelIndex)),mClient, SLOT(onDataChanged()));
+        //QObject::disconnect(mGraphicalModel, SIGNAL(dataChanged(QModelIndex,QModelIndex)),mClient, SLOT(onDataChanged()));
+        QObject::disconnect(mLogicalModel, SIGNAL(smthChanged(QString,QVariant&,int)), mClient, SLOT(onDataChanged(QString,QVariant&,int)));
         mClient->disconnectFromServer();
         //qDebug() << "I'm not a Client any more!";
     }
@@ -59,6 +60,7 @@ void Models::roleChanged(int exRole, QString addr)
     //qDebug() << "roleChanged " << role;
     switch(role) {
     case 0:
+        qDebug() << "Forever alone";
         break;
     case 1:
         makeItClient(addr);
@@ -73,16 +75,17 @@ void Models::roleChanged(int exRole, QString addr)
 
 void Models::makeItClient(QString addr)
 {
-    //qDebug() << "I'm a client!";
+    qDebug() << "I'm a client!";
     mClient = new Client();
     mClient->connectToServer(addr);
-    QObject::connect(mLogicalModel, SIGNAL(dataChanged(QModelIndex,QModelIndex)),mClient, SLOT(onDataChanged()));
-    QObject::connect(mGraphicalModel, SIGNAL(dataChanged(QModelIndex,QModelIndex)),mClient, SLOT(onDataChanged()));
+    //QObject::connect(mLogicalModel, SIGNAL(dataChanged(QModelIndex,QModelIndex)),mClient, SLOT(onDataChanged()));
+    QObject::connect(mLogicalModel, SIGNAL(smthChanged(QString,QVariant,int)),mClient, SLOT(onDataChanged(QString,QVariant,int)));
+    //QObject::connect(mGraphicalModel, SIGNAL(dataChanged(QModelIndex,QModelIndex)),mClient, SLOT(onDataChanged()));
 }
 
 void Models::makeItServer()
 {
-    //qDebug() << "I'm a server!";
+    qDebug() << "I'm a server!";
     mServer = new Server();
     mServer->listen();
 }

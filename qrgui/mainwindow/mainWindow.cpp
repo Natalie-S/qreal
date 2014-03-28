@@ -83,7 +83,7 @@ MainWindow::MainWindow(QString const &fileToOpen)
 {
     mUi->setupUi(this);
     mUi->paletteTree->initMainWindow(this);
-    setWindowTitle("QReal");
+    setWindowTitle("QReal Stand alone machine");
     initSettingsManager();
     registerMetaTypes();
     SplashScreen splashScreen(SettingsManager::value("Splashscreen").toBool());
@@ -255,7 +255,15 @@ void MainWindow::connectActions()
     connect(&mModels->logicalModelAssistApi().exploser(), SIGNAL(explosionTargetRemoved())
             , this, SLOT(closeTabsWithRemovedRootElements()));
 
+    connect(&mPreferencesDialog, SIGNAL(newRole(int,QString)), this, SLOT(changeRoleInWindowTitle()));
+
     setDefaultShortcuts();
+}
+
+void MainWindow::changeRoleInWindowTitle()
+{
+    QString const windowTitle = mToolManager.customizer()->windowTitle();
+    setWindowTitle(windowTitle + " " + currentRole());
 }
 
 void MainWindow::initActionsFromSettings()
@@ -714,6 +722,25 @@ void MainWindow::addEdgesToBeDeleted(IdList &itemsToDelete)
     }
 }
 
+QString MainWindow::currentRole()
+{
+    QString role = "";
+    int intRole = SettingsManager::value("role").toInt();
+    switch(intRole)
+    {
+    case 0:
+        role = "Stand alone machine";
+        break;
+    case 1:
+        role = "Client machine";
+        break;
+    case 2:
+        role = "Server machine";
+        break;
+    }
+    return role;
+}
+
 void MainWindow::changeWindowTitle(int index)
 {
     QString const windowTitle = mToolManager.customizer()->windowTitle();
@@ -722,10 +749,10 @@ void MainWindow::changeWindowTitle(int index)
         QScintillaTextEdit *area = dynamic_cast<QScintillaTextEdit *>(currentTab());
         if (area) {
             QString const filePath = mTextManager->path(area);
-            setWindowTitle(windowTitle + " " + filePath);
+            setWindowTitle(windowTitle + " " + currentRole() + " " + filePath);
         }
     } else {
-        setWindowTitle(windowTitle);
+        setWindowTitle(windowTitle + " " + currentRole());
     }
 }
 
@@ -735,7 +762,7 @@ void MainWindow::setTextChanged(bool changed)
     QString const windowTitle = mToolManager.customizer()->windowTitle();
     QString const filePath = mTextManager->path(area);
     QString const chIndicator = changed ? "*" : "";
-    setWindowTitle(windowTitle + " " + chIndicator + filePath);
+    setWindowTitle(windowTitle + " " + currentRole() + " " + chIndicator + filePath);
     int const index = mUi->tabs->currentIndex();
     mUi->tabs->setTabText(index, mUi->tabs->tabText(index).remove(QChar('*'), Qt::CaseInsensitive) + chIndicator);
 }
@@ -2012,7 +2039,7 @@ void MainWindow::initToolManager()
 {
     Customizer * const customizer = mToolManager.customizer();
     if (customizer) {
-        setWindowTitle(customizer->windowTitle());
+        setWindowTitle(customizer->windowTitle() + " " + currentRole());
         setWindowIcon(customizer->applicationIcon());
         setVersion(customizer->productVersion());
         customizer->customizeDocks(this);

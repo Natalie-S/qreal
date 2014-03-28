@@ -16,8 +16,12 @@ HEADERS += \
 	$$PWD/logicalModelAssistApi.h \
 	$$PWD/details/exploser.h \
 	$$PWD/details/modelsImplementation/modelIndexesInterface.h \
-        $$PWD/details/client.h \
-        $$PWD/details/server.h \
+	$$PWD/details/collaborativeDevelopement/client.h \
+	$$PWD/details/collaborativeDevelopement/server.h \
+	$$PWD/details/collaborativeDevelopement/valuesSerializer.h \
+#	$$PWD/details/client.h \
+#	$$PWD/details/server.h \
+#	$$PWD/details/valuesSerializer.h \
 
 SOURCES += \
 	$$PWD/details/graphicalModel.cpp \
@@ -36,5 +40,9 @@ SOURCES += \
 	$$PWD/graphicalModelAssistApi.cpp \
 	$$PWD/logicalModelAssistApi.cpp \
 	$$PWD/details/exploser.cpp \
-        $$PWD/details/client.cpp \
-        $$PWD/details/server.cpp
+	$$PWD/details/collaborativeDevelopement/client.cpp \
+	$$PWD/details/collaborativeDevelopement/server.cpp \
+	$$PWD/details/collaborativeDevelopement/valuesSerializer.cpp \
+#	$$PWD/details/client.cpp \
+#	$$PWD/details/server.cpp \
+#	$$PWD/details/valuesSerializer.cpp \

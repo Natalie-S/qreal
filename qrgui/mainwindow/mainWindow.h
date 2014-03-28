@@ -166,6 +166,7 @@ public:
     QListIterator<EditorView *> openedEditorViews() const;
 
     void setTabText(QWidget *tab, QString const &text);
+    QString currentRole();
 
 signals:
     void gesturesShowed();
@@ -197,6 +198,7 @@ public slots:
     void changeWindowTitle(int index);
 
 private slots:
+    void changeRoleInWindowTitle();
     /// Suggests user to select a root diagram for the new project
     /// if more than one diagram loaded or creates project with the only diagram
     /// as root otherwise

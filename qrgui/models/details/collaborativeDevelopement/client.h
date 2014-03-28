@@ -4,6 +4,9 @@
 #include <QtNetwork/QHostAddress>
 #include <cstdio>
 #include <QMessageBox>
+#include "models/details/collaborativeDevelopement/valuesSerializer.h"
+
+class ValueSerializer;
 
 class QTcpSocket;
 
@@ -18,7 +21,9 @@ class Client : public QObject
 
     public slots:
         void onConnected();
-        void onDataChanged();
+        void onDataChanged(QString id, const QVariant &value, int role);
+        void onElementAdded(QString parent, QString id,QString logicalId, QString const &name
+                                     , QPointF const &position);
     private:
         QTcpSocket *mSocket;
 };

@@ -17,11 +17,6 @@ void Server::close() {
 void Server::onNewConnection() {
     mSocket = mServer->nextPendingConnection();
     if(mSocket->state() == QTcpSocket::ConnectedState) {
-        //printf("New connection established.\n");
-        /*QMessageBox msgBox;
-        msgBox.setText("New connection established.\n");
-        msgBox.setStandardButtons(QMessageBox::Ok);
-        msgBox.show();*/
         qDebug() << "Smth's happening";
     }
 
@@ -43,7 +38,8 @@ void Server::onReadyRead() {
         msgBox.show();*/
 
         //printf(">> %s", ba.constData());
-        qDebug() << "DC";
+        QByteArray ba = mSocket->readLine();
+        qDebug() << ba.constData();
     }
 }
 

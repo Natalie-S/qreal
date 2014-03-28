@@ -18,11 +18,11 @@ PreferencesMiscellaniousPage::PreferencesMiscellaniousPage(QWidget *parent)
     mUi->colorComboBox->addItems(QColor::colorNames());
 
     mExRole = 0;
-    mUi->ipAddressEdit->setDisabled(1);
+    //mUi->ipAddressEdit->setDisabled(1);
     connect(mUi->clientRole, SIGNAL(clicked()), this, SLOT(enableIpAddressEdit()));
     connect(mUi->serverRole, SIGNAL(clicked()), this, SLOT(disableIpAddressEdit()));
     connect(mUi->standAloneRole, SIGNAL(clicked()), this, SLOT(disableIpAddressEdit()));
-    SettingsManager::setValue("role", 0);
+    //SettingsManager::setValue("role", 0);
     restoreSettings();
 }
 

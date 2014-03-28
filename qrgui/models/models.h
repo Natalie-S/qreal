@@ -4,8 +4,10 @@
 #include "models/details/logicalModel.h"
 #include "models/graphicalModelAssistApi.h"
 #include "models/logicalModelAssistApi.h"
-#include "models/details/client.h"
-#include "models/details/server.h"
+#include "models/details/collaborativeDevelopement/client.h"
+#include "models/details/collaborativeDevelopement/server.h"
+//#include "models/details/client.h"
+//#include "models/details/server.h"
 
 namespace qReal {
 namespace models {
@@ -35,6 +37,8 @@ public:
 
 public slots:
     void roleChanged(int exRole, QString addr);
+//    void onElementAdded(Id const &parent, Id const &id,Id const &logicalId, QString const &name
+//                        , QPointF const &position);
 
 private:
     models::details::GraphicalModel *mGraphicalModel;
