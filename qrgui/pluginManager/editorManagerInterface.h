@@ -24,9 +24,12 @@ class Element;
 
 class MainWindow;
 
-class EditorManagerInterface
+class EditorManagerInterface :  public QObject
 {
+    Q_OBJECT
+
 public:
+    explicit EditorManagerInterface(QObject *parent = NULL) : QObject(parent) {}
 	virtual ~EditorManagerInterface() {}
 
 	virtual IdList editors() const = 0;
@@ -83,21 +86,11 @@ public:
 	virtual QString diagramNodeName(QString const &editor, QString const &diagram) const = 0;
 	virtual bool isInterpretationMode() const = 0;
 	virtual bool isParentProperty(Id const &id, QString const &propertyName) const = 0;
-	virtual void deleteProperty(QString const &propDisplayedName) const = 0;
-	virtual void addProperty(Id const &id, QString const &propDisplayedName) const = 0;
-	virtual void updateProperties(Id const &id, QString const &property, QString const &propertyType
-			, QString const &propertyDefaultValue, QString const &propertyDisplayedName) const = 0;
-	virtual QString propertyNameByDisplayedName(Id const &id, QString const &displayedPropertyName) const = 0;
+    virtual QString propertyNameByDisplayedName(Id const &id, QString const &displayedPropertyName) const = 0;
 	virtual IdList children(Id const &parent) const = 0;
-	virtual QString shape(Id const &id) const = 0;
-	virtual void updateShape(Id const &id, QString const &graphics) const = 0;
-	virtual void deleteElement(MainWindow *mainWindow, Id const &id) const = 0;
-	virtual bool isRootDiagramNode(Id const &id) const = 0;
-	virtual void addNodeElement(Id const &diagram, QString const &name, bool isRootDiagramNode) const = 0;
-	virtual void addEdgeElement(Id const &diagram, QString const &name, QString const &labelText
-			, QString const &labelType, QString const &lineType
-			, QString const &beginType, QString const &endType) const = 0;
-	virtual QPair<Id, Id> createEditorAndDiagram(QString const &name) const = 0;
+	virtual QString shape(Id const &id) const = 0;    
+    virtual bool isRootDiagramNode(Id const &id) const = 0;
+
 	virtual void saveMetamodel(QString const &newMetamodelFileName) = 0;
 	virtual QString saveMetamodelFilePath() const = 0;
 	virtual QStringList paletteGroups(Id const &editor, Id const &diagram) const = 0;
@@ -109,6 +102,26 @@ public:
 	virtual Pattern getPatternByName (QString const &str) const = 0;
 	virtual QList<QString> getPatternNames() const = 0;
 	virtual QSize iconSize(Id const &id) const = 0;
+
+signals:
+    void metaModelChanged(QString const &params);
+
+public slots:
+    virtual QPair<Id, Id> createEditorAndDiagram(QString const &name) = 0;
+    virtual void deleteProperty(QString const &propDisplayedName) = 0;
+    virtual void addProperty(Id const &id, QString const &propDisplayedName) = 0;
+    virtual void updateProperties(Id const &id, QString const &property, QString const &propertyType
+            , QString const &propertyDefaultValue, QString const &propertyDisplayedName) = 0;
+    virtual void updateShape(Id const &id, QString const &graphics) = 0;
+    virtual void deleteElement(MainWindow *mainWindow, Id const &id) = 0;
+    virtual void addNodeElement(Id const &diagram, QString const &name, bool isRootDiagramNode) = 0;
+    virtual void addEdgeElement(Id const &diagram, QString const &name, QString const &labelText
+            , QString const &labelType, QString const &lineType
+            , QString const &beginType, QString const &endType) = 0;
+//    virtual void addNodeElementFromClient(Id const &diagram, QString const &name, bool isRootDiagramNode) = 0;
+//    virtual void addEdgeElementFromClient(Id const &diagram, QString const &name, QString const &labelText
+//            , QString const &labelType, QString const &lineType
+//            , QString const &beginType, QString const &endType) = 0;
 };
 
 }

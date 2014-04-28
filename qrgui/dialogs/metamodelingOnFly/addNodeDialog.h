@@ -21,7 +21,7 @@ public:
 	/// @param mainWindow Reference to QReal main window.
 	/// @param diagram Id of a diagram to which we will add new node.
 	/// @param editorManagerProxy Editor manager.
-	explicit AddNodeDialog(MainWindow &mainWindow, Id const &diagram, EditorManagerInterface const &editorManagerProxy);
+    explicit AddNodeDialog(MainWindow &mainWindow, Id const &diagram, EditorManagerInterface &editorManagerProxy);
 
 	/// Destructor.
 	~AddNodeDialog();
@@ -33,7 +33,7 @@ private:
 	Ui::AddNodeDialog *mUi;
 	MainWindow &mMainWindow;
 	Id const mDiagram;
-	EditorManagerInterface const &mEditorManagerProxy;
+    EditorManagerInterface &mEditorManagerProxy;
 };
 
 }

@@ -22,7 +22,7 @@ namespace qReal {
 
 class Element;
 
-class EditorManager : public QObject, public EditorManagerInterface
+class EditorManager : public EditorManagerInterface
 {
 	Q_OBJECT
 
@@ -94,23 +94,31 @@ public:
 	QString diagramNodeName(QString const &editor, QString const &diagram) const override;
 	bool isInterpretationMode() const override;
 	bool isParentProperty(Id const &id, QString const &propertyName) const override;
-	void deleteProperty(QString const &propDisplayedName) const override;
-	void addProperty(Id const &id, QString const &propDisplayedName) const override;
-	void updateProperties(Id const &id, QString const &property, QString const &propertyType
-			, QString const &propertyDefaultValue, QString const &propertyDisplayedName) const override;
+
 	QString propertyNameByDisplayedName(Id const &id, QString const &displayedPropertyName) const override;
 	IdList children(Id const &parent) const override;
 	QString shape(Id const &id) const override;
-	void updateShape(Id const &id, QString const &graphics) const override;
-	void deleteElement(MainWindow *mainWindow, Id const &id) const override;
-	bool isRootDiagramNode(Id const &id) const override;
-	void addNodeElement(Id const &diagram, QString const &name, bool isRootDiagramNode) const override;
-	void addEdgeElement(Id const &diagram, QString const &name, QString const &labelText
-			, QString const &labelType, QString const &lineType, QString const &beginType
-			, QString const &endType) const override;
-	QPair<Id, Id> createEditorAndDiagram(QString const &name) const override;
+    bool isRootDiagramNode(Id const &id) const override;
 	void saveMetamodel(QString const &newMetamodelFileName) override;
 	QString saveMetamodelFilePath() const override;
+
+public slots:
+     QPair<Id, Id> createEditorAndDiagram(QString const &name) override;
+     void deleteProperty(QString const &propDisplayedName) override;
+     void addProperty(Id const &id, QString const &propDisplayedName) override;
+     void updateProperties(Id const &id, QString const &property, QString const &propertyType
+             , QString const &propertyDefaultValue, QString const &propertyDisplayedName) override;
+     void updateShape(Id const &id, QString const &graphics) override;
+     void deleteElement(MainWindow *mainWindow, Id const &id) override;
+     void addNodeElement(Id const &diagram, QString const &name, bool isRootDiagramNode) override;
+     void addEdgeElement(Id const &diagram, QString const &name, QString const &labelText
+             , QString const &labelType, QString const &lineType, QString const &beginType
+             , QString const &endType) override;
+//     void addNodeElementFromClient(Id const &diagram, QString const &name, bool isRootDiagramNode) override;
+//     void addEdgeElementFromClient(Id const &diagram, QString const &name, QString const &labelText
+//                 , QString const &labelType, QString const &lineType
+//                 , QString const &beginType, QString const &endType) override;
+
 
 private:
 	QStringList mPluginsLoaded;

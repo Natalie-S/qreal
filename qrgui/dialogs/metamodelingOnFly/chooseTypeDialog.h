@@ -22,7 +22,7 @@ public:
 	/// @param mainWindow Reference to QReal main window.
 	/// @param diagram Id of a diagram to which we will add new node or edge.
 	/// @param editorManagerProxy Editor manager.
-	ChooseTypeDialog(MainWindow &mainWindow, Id const &diagram, EditorManagerInterface const &editorManagerProxy);
+    ChooseTypeDialog(MainWindow &mainWindow, Id const &diagram, EditorManagerInterface &editorManagerProxy);
 
 	/// Destructor.
 	~ChooseTypeDialog();
@@ -34,7 +34,7 @@ private:
 	Ui::ChooseTypeDialog *mUi;
 	MainWindow &mMainWindow;
 	Id const mDiagram;
-	EditorManagerInterface const &mEditorManagerProxy;
+    EditorManagerInterface &mEditorManagerProxy;
 };
 
 }

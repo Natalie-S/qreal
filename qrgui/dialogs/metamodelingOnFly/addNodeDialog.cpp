@@ -7,7 +7,7 @@ using namespace qReal;
 using namespace gui;
 
 AddNodeDialog::AddNodeDialog(MainWindow &mainWindow, Id const &diagram
-		, EditorManagerInterface const &editorManagerProxy)
+        , EditorManagerInterface &editorManagerProxy)
 		: QDialog(&mainWindow)
 		, mUi(new Ui::AddNodeDialog)
 		, mMainWindow(mainWindow)

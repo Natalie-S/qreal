@@ -143,9 +143,6 @@ public:
     /// Returns editor manager proxy, which allows to change editor manager implementation.
     ProxyEditorManager &editorManagerProxy();
 
-    /// Loads (or reloads) available editor plugins and reinits palette.
-    void loadPlugins();
-
     /// Clears selection on all opened tabs.
     void clearSelectionOnTabs();
 
@@ -172,10 +169,17 @@ signals:
     void gesturesShowed();
     void currentIdealGestureChanged();
     void rootDiagramChanged();
+//    void pluginsWereLoaded();
 
 public slots:
+    void addNodeElementFromClient(Id const &diagram, QString const &name, bool isRootDiagramNode);
+    void addEdgeElementFromClient(Id const &diagram, QString const &name, QString const &labelText
+               , QString const &labelType, QString const &lineType
+               , QString const &beginType, QString const &endType);
     void deleteFromScene();
     void propertyEditorScrollTo(QModelIndex const &index);
+    /// Loads (or reloads) available editor plugins and reinits palette.
+    void loadPlugins();
 
     virtual void activateItemOrDiagram(Id const &id, bool setSelected = true);
     void activateItemOrDiagram(QModelIndex const &idx, bool setSelected = true);
@@ -198,6 +202,9 @@ public slots:
     void changeWindowTitle(int index);
 
 private slots:
+    void setConnection(int role);
+    void connectAsClient();
+    void connectAsServer();
     void changeRoleInWindowTitle();
     /// Suggests user to select a root diagram for the new project
     /// if more than one diagram loaded or creates project with the only diagram

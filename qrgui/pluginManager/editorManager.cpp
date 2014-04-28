@@ -13,7 +13,7 @@
 
 using namespace qReal;
 
-EditorManager::EditorManager(QObject *parent) : QObject(parent)
+EditorManager::EditorManager(QObject *parent) : EditorManagerInterface(parent)
 {
 	mPluginsDir = QDir(qApp->applicationDirPath());
 
@@ -566,19 +566,19 @@ bool EditorManager::isParentProperty(Id const &id, QString const &propertyName) 
 	return false;
 }
 
-void EditorManager::deleteProperty(QString const &propDisplayedName) const
+void EditorManager::deleteProperty(QString const &propDisplayedName)
 {
 	Q_UNUSED(propDisplayedName);
 }
 
-void EditorManager::addProperty(Id const &id, QString const &propDisplayedName) const
+void EditorManager::addProperty(Id const &id, QString const &propDisplayedName)
 {
 	Q_UNUSED(id);
 	Q_UNUSED(propDisplayedName);
 }
 
 void EditorManager::updateProperties(Id const &id, QString const &property, QString const &propertyType
-		, QString const &propertyDefaultValue, QString const &propertyDisplayedName) const
+        , QString const &propertyDefaultValue, QString const &propertyDisplayedName)
 {
 	Q_UNUSED(id);
 	Q_UNUSED(property);
@@ -606,13 +606,13 @@ QString EditorManager::shape(Id const &id) const
 	return "";
 }
 
-void EditorManager::updateShape(Id const &id, QString const &graphics) const
+void EditorManager::updateShape(Id const &id, QString const &graphics)
 {
 	Q_UNUSED(id);
 	Q_UNUSED(graphics);
 }
 
-void EditorManager::deleteElement(MainWindow *mainWindow, Id const &id) const
+void EditorManager::deleteElement(MainWindow *mainWindow, Id const &id)
 {
 	Q_UNUSED(mainWindow);
 	Q_UNUSED(id);
@@ -624,7 +624,7 @@ bool EditorManager::isRootDiagramNode(Id const &id) const
 	return false;
 }
 
-void EditorManager::addNodeElement(Id const &diagram, QString const &name, bool isRootDiagramNode) const
+void EditorManager::addNodeElement(Id const &diagram, QString const &name, bool isRootDiagramNode)
 {
 	Q_UNUSED(diagram);
 	Q_UNUSED(name);
@@ -632,7 +632,7 @@ void EditorManager::addNodeElement(Id const &diagram, QString const &name, bool 
 }
 
 void EditorManager::addEdgeElement(Id const &diagram, QString const &name, QString const &labelText
-		, QString const &labelType, QString const &lineType, QString const &beginType, QString const &endType) const
+        , QString const &labelType, QString const &lineType, QString const &beginType, QString const &endType)
 {
 	Q_UNUSED(diagram);
 	Q_UNUSED(name);
@@ -643,7 +643,7 @@ void EditorManager::addEdgeElement(Id const &diagram, QString const &name, QStri
 	Q_UNUSED(endType);
 }
 
-QPair<Id, Id> EditorManager::createEditorAndDiagram(QString const &name) const
+QPair<Id, Id> EditorManager::createEditorAndDiagram(QString const &name)
 {
 	Q_UNUSED(name);
 	return QPair<Id, Id>();
@@ -658,3 +658,17 @@ QString EditorManager::saveMetamodelFilePath() const
 {
 	return "";
 }
+
+//void EditorManager::addNodeElementFromClient(Id const &diagram, QString const &name, bool isRootDiagramNode)
+//{
+//    EditorManagerInterface::addNodeElement(diagram, name, isRootDiagramNode);
+//    qReal::MainWindow::loadPlugins();
+//}
+
+//void EditorManager::addEdgeElementFromClient(Id const &diagram, QString const &name, QString const &labelText
+//            , QString const &labelType, QString const &lineType
+//            , QString const &beginType, QString const &endType)
+//{
+//    EditorManagerInterface::addEdgeElement(diagram, name, labelText, labelType, lineType, beginType, endType);
+//    qReal::MainWindow::loadPlugins();
+//}

@@ -90,6 +90,26 @@ void GraphicalModel::updateElements(Id const &logicalId, QString const &name)
 	}
 }
 
+void GraphicalModel::justAddElementToModel(const Id &parent, const Id &id, const Id &logicalId
+                           , QString const &name, const QPointF &position)
+{
+    Q_ASSERT_X(mModelItems.contains(parent), "addElementToModel", "Adding element to non-existing parent");
+    AbstractModelItem *parentItem = mModelItems[parent];
+
+    GraphicalModelItem *newGraphicalModelItem = NULL;
+    Id actualLogicalId = logicalId;
+    if (logicalId == Id::rootId() || logicalId.isNull()) {
+        AbstractModelItem *newItem = createModelItem(id, parentItem);
+        newGraphicalModelItem = static_cast<GraphicalModelItem *>(newItem);
+        actualLogicalId = newGraphicalModelItem->logicalId();
+    } else {
+        GraphicalModelItem *graphicalParentItem = static_cast<GraphicalModelItem *>(parentItem);
+        newGraphicalModelItem = new GraphicalModelItem(id, logicalId, graphicalParentItem);
+    }
+
+    initializeElement(id, actualLogicalId, parentItem, newGraphicalModelItem, name, position);
+}
+
 void GraphicalModel::addElementToModel(const Id &parent, const Id &id
 		, const Id &logicalId, QString const &name, const QPointF &position)
 {
@@ -107,7 +127,8 @@ void GraphicalModel::addElementToModel(const Id &parent, const Id &id
 		newGraphicalModelItem = new GraphicalModelItem(id, logicalId, graphicalParentItem);
 	}
 
-	initializeElement(id, actualLogicalId, parentItem, newGraphicalModelItem, name, position);
+    initializeElement(id, actualLogicalId, parentItem, newGraphicalModelItem, name, position);
+    emit elementAdded("g|", parent.toString(), id.toString(), logicalId.toString(), name, position);
 }
 
 void GraphicalModel::initializeElement(const Id &id, const Id &logicalId
@@ -169,6 +190,45 @@ QVariant GraphicalModel::data(const QModelIndex &index, int role) const
 	}
 }
 
+bool GraphicalModel::justSetData(const Id &id, const QVariant &value, int role)
+{
+    switch (role) {
+    case Qt::DisplayRole:
+    case Qt::EditRole:
+        setNewName(id, value.toString());
+        break;
+    case roles::positionRole:
+        mApi.setPosition(id, value);
+        break;
+    case roles::configurationRole:
+        mApi.setConfiguration(id, value);
+        break;
+    case roles::fromRole:
+        mApi.setFrom(id, value.value<Id>());
+        break;
+    case roles::toRole:
+        mApi.setTo(id, value.value<Id>());
+        break;
+    case roles::fromPortRole:
+        mApi.setFromPort(id, value.toDouble());
+        break;
+    case roles::toPortRole:
+        mApi.setToPort(id, value.toDouble());
+        break;
+    default:
+        if (role >= roles::customPropertiesBeginRole) {
+            QString selectedProperty = findPropertyName(id, role);
+            mApi.setProperty(id, selectedProperty, value);
+            break;
+        }
+        Q_ASSERT(role < Qt::UserRole);
+        return false;
+    }
+    //emit dataChanged(index, index);
+    //emit smthChanged("g", item->id().toString(), value, role);
+    return true;
+}
+
 bool GraphicalModel::setData(const QModelIndex &index, const QVariant &value, int role)
 {
 	if (index.isValid()) {
@@ -206,6 +266,7 @@ bool GraphicalModel::setData(const QModelIndex &index, const QVariant &value, in
 			return false;
 		}
 		emit dataChanged(index, index);
+        emit smthChanged("g|", item->id().toString(), value, role);
 		return true;
 	}
 	return false;

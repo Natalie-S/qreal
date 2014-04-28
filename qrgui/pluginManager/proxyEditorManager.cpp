@@ -225,20 +225,26 @@ bool ProxyEditorManager::isParentProperty(Id const &id, QString const &propertyN
 	return mProxiedEditorManager->isParentProperty(id, propertyName);
 }
 
-void ProxyEditorManager::deleteProperty(QString const &propDisplayedName) const
+void ProxyEditorManager::deleteProperty(QString const &propDisplayedName)
 {
 	mProxiedEditorManager->deleteProperty(propDisplayedName);
 }
 
-void ProxyEditorManager::addProperty(Id const &id, QString const &propDisplayedName) const
+void ProxyEditorManager::addProperty(Id const &id, QString const &propDisplayedName)
 {
 	mProxiedEditorManager->addProperty(id, propDisplayedName);
+    QStringList params;
+    params << "addProp" << id.toString() << propDisplayedName;
+    emit metaModelChanged(params.join("|") + "|");
 }
 
 void ProxyEditorManager::updateProperties(Id const &id, QString const &property, QString const &propertyType
-		, QString const &propertyDefaultValue, QString const &propertyDisplayedName) const
+        , QString const &propertyDefaultValue, QString const &propertyDisplayedName)
 {
 	mProxiedEditorManager->updateProperties(id, property, propertyType, propertyDefaultValue, propertyDisplayedName);
+    QStringList params;
+    params << "updProp" << id.toString() << property << propertyType << propertyDefaultValue << propertyDisplayedName;
+    emit metaModelChanged(params.join("|") + "|");
 }
 
 QString ProxyEditorManager::propertyNameByDisplayedName(Id const &id, QString const &displayedPropertyName) const
@@ -256,12 +262,15 @@ QString ProxyEditorManager::shape(Id const &id) const
 	return mProxiedEditorManager->shape(id);
 }
 
-void ProxyEditorManager::updateShape(Id const &id, QString const &graphics) const
+void ProxyEditorManager::updateShape(Id const &id, QString const &graphics)
 {
 	mProxiedEditorManager->updateShape(id, graphics);
+    QStringList params;
+    params << "updShape" << id.toString() << graphics;
+    emit metaModelChanged(params.join("|") + "|");
 }
 
-void ProxyEditorManager::deleteElement(MainWindow *mainWindow, Id const &id) const
+void ProxyEditorManager::deleteElement(MainWindow *mainWindow, Id const &id)
 {
 	mProxiedEditorManager->deleteElement(mainWindow, id);
 }
@@ -271,18 +280,24 @@ bool ProxyEditorManager::isRootDiagramNode(Id const &id) const
 	return mProxiedEditorManager->isRootDiagramNode(id);
 }
 
-void ProxyEditorManager::addNodeElement(Id const &diagram, QString const &name, bool isRootDiagramNode) const
+void ProxyEditorManager::addNodeElement(Id const &diagram, QString const &name, bool isRootDiagramNode)
 {
 	mProxiedEditorManager->addNodeElement(diagram, name, isRootDiagramNode);
+    QStringList params;
+    params << "addNode" << diagram.toString() << name << (isRootDiagramNode ? "t" : "f");
+    emit metaModelChanged(params.join("|") + "|");
 }
 
 void ProxyEditorManager::addEdgeElement(Id const &diagram, QString const &name, QString const &labelText
-		, QString const &labelType, QString const &lineType, QString const &beginType, QString const &endType) const
+        , QString const &labelType, QString const &lineType, QString const &beginType, QString const &endType)
 {
 	mProxiedEditorManager->addEdgeElement(diagram, name, labelText, labelType, lineType, beginType, endType);
+    QStringList params;
+    params << "addEdge" << diagram.toString() <<  name << labelText << labelType << lineType << beginType << endType;
+    emit metaModelChanged(params.join("|") + "|");
 }
 
-QPair<Id, Id> ProxyEditorManager::createEditorAndDiagram(QString const &name) const
+QPair<Id, Id> ProxyEditorManager::createEditorAndDiagram(QString const &name)
 {
 	return mProxiedEditorManager->createEditorAndDiagram(name);
 }
@@ -341,3 +356,22 @@ QSize ProxyEditorManager::iconSize(Id const &id) const
 {
 	return mProxiedEditorManager->iconSize(id);
 }
+
+EditorManagerInterface *ProxyEditorManager::getEditorManager()
+{
+    return mProxiedEditorManager;
+}
+
+//void ProxyEditorManager::addNodeElementFromClient(Id const &diagram, QString const &name, bool isRootDiagramNode)
+//{
+//    EditorManagerInterface::addEdgeElement(diagram, name, isRootDiagramNode);
+//    MainWindow::loadPlugins();
+//}
+
+//void ProxyEditorManager::addEdgeElementFromClient(Id const &diagram, QString const &name, QString const &labelText
+//            , QString const &labelType, QString const &lineType
+//            , QString const &beginType, QString const &endType)
+//{
+//    EditorManagerInterface::addNodeElement(diagram, name, labelText, labelType, lineType);
+//    MainWindow::loadPlugins();
+//}

@@ -46,11 +46,20 @@ public:
     virtual qReal::details::ModelsAssistInterface* modelAssistInterface() const;
     LogicalModelAssistApi &logicalModelAssistApi() const;
     virtual void stackBefore(QModelIndex const &element, QModelIndex const &sibling);
-signals:
-    void smthChanged(QString id, const QVariant &value, int role);
-    void elementAdded(QString parent, QString id,QString logicalId, QString const &name
-                      , QPointF const &position);
 
+signals:
+    void modelElemChanged(QString const &params);
+    void smthChanged(QString const &modelIdentifier, QString const &id, const QVariant &value, int role);
+    void elementAdded(QString const &modelIdentifier
+                      , QString const &parent
+                      , QString const &id
+                      , QString const &logicalId
+                      , QString const &name
+                      , QPointF const &position);
+public slots:
+    bool justSetData(const Id &id, const QVariant &value, int role);
+    void justAddElementToModel(const Id &parent, const Id &id, const Id &logicalId
+                               , QString const &name, const QPointF &position);
 private:
     virtual void init();
     void loadSubtreeFromClient(modelsImplementation::LogicalModelItem * const parent);

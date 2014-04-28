@@ -6,16 +6,19 @@
 #include "models/logicalModelAssistApi.h"
 #include "models/details/collaborativeDevelopement/client.h"
 #include "models/details/collaborativeDevelopement/server.h"
-//#include "models/details/client.h"
-//#include "models/details/server.h"
+
+using namespace qReal;
+using namespace models;
 
 namespace qReal {
 namespace models {
 
-class Models
+class Models : public QObject
 {
+    Q_OBJECT
 public:
-    explicit Models(QString const &workingCopy, EditorManagerInterface &editorManager);
+
+    explicit Models(QString const &workingCopy, EditorManagerInterface &editorManager, QObject *parent = 0);
     ~Models();
 
     QAbstractItemModel *graphicalModel() const;
@@ -34,6 +37,10 @@ public:
     void reinit();
     void makeItClient(QString addr);
     void makeItServer();
+    models::details::collaborativeDevelopment::Client *getClient();
+    models::details::collaborativeDevelopment::Server *getServer();
+signals:
+    void roleWasSet(int role);
 
 public slots:
     void roleChanged(int exRole, QString addr);
@@ -45,8 +52,8 @@ private:
     models::details::GraphicalPartModel *mGraphicalPartModel;
     models::details::LogicalModel *mLogicalModel;
     qrRepo::RepoControlInterface *mRepoApi;
-    Client *mClient;
-    Server *mServer;
+    models::details::collaborativeDevelopment::Client *mClient = NULL;
+    models::details::collaborativeDevelopment::Server *mServer = NULL;
 };
 
 }

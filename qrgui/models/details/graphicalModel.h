@@ -46,7 +46,19 @@ public:
 	virtual void stackBefore(QModelIndex const &element, QModelIndex const &sibling);
 
 signals:
-	void nameChanged(Id const &id);
+    void nameChanged(Id const &id);
+    void modelElemChanged(QString const &params);
+    void smthChanged(QString const &modelIdentifier, QString const &id, const QVariant &value, int role);
+    void elementAdded(QString const &modelIdentifier
+                      , QString const &parent
+                      , QString const &id
+                      , QString const &logicalId
+                      , QString const &name
+                      , QPointF const &position);
+public slots:
+    bool justSetData(const Id &id, const QVariant &value, int role);
+    void justAddElementToModel(const Id &parent, const Id &id, const Id &logicalId
+                               , QString const &name, const QPointF &position);
 
 private:
 	LogicalModelView mLogicalModelView;

@@ -257,7 +257,65 @@ void MainWindow::connectActions()
 
     connect(&mPreferencesDialog, SIGNAL(newRole(int,QString)), this, SLOT(changeRoleInWindowTitle()));
 
+    connect(mModels, SIGNAL(roleWasSet(int)), this, SLOT(setConnection(int)));
+
+
     setDefaultShortcuts();
+}
+void MainWindow::setConnection(int role)
+{
+//    Q_ASSERT(role != 1 && role != 2);
+    switch(role)
+    {
+    case 1:
+        connect (mModels->getClient(), SIGNAL(connectedToServer()), this, SLOT(connectAsClient()));
+        break;
+    case 2:
+        connect (mModels->getServer(), SIGNAL(connectedToClient()), this, SLOT(connectAsServer()));
+        break;
+    default:
+        break;
+    }
+}
+
+void MainWindow::connectAsServer()
+{
+    qDebug() << "Attention! minwindow connectAsSrv";
+    connect(mModels->getServer(), SIGNAL(diagramCreated(QString)), mStartWidget, SLOT(createDiagramFromClient(QString)));
+    EditorManagerInterface *emi = &(this->editorManager());
+    connect(mModels->getServer(), SIGNAL(propDeleted(QString)), emi, SLOT(deleteProperty(QString)));
+    connect(mModels->getServer(), SIGNAL(propUpdated(Id,QString,QString,QString,QString)), emi, SLOT(updateProperties(Id,QString,QString,QString,QString)));
+    connect(mModels->getServer(), SIGNAL(shapeUpdated(Id,QString)), emi, SLOT(updateShape(Id,QString)));
+    connect(mModels->getServer(), SIGNAL(nodeAdded(Id,QString,bool)), this, SLOT(addNodeElementFromClient(Id,QString,bool)));
+    connect(mModels->getServer(), SIGNAL(edgeAdded(Id,QString,QString,QString,QString,QString,QString)), this, SLOT(addEdgeElementFromClient(Id,QString,QString,QString,QString,QString,QString)));
+    connect(mModels->getServer(), SIGNAL(propAdded(Id,QString)), emi, SLOT(addProperty(Id,QString)));
+//    connect(mModels->getServer(), SIGNAL(pluginsWereLoaded()), this, SLOT(loadPlugins()));
+}
+
+void MainWindow::connectAsClient()
+{
+    qDebug() << "Attention! connectAsClient";
+    EditorManagerInterface *emi = &(this->editorManager());
+    Q_ASSERT(emi != NULL);
+    connect(emi, SIGNAL(metaModelChanged(QString)), mModels->getClient(), SLOT(onMetaModelChanged(QString)));
+    connect(mStartWidget, SIGNAL(diagramCreated(QString)), mModels->getClient(), SLOT(onDiagramCreated(QString)));
+//    connect(this, SIGNAL(pluginsWereLoaded()), mModels->getClient(), SLOT(onPluginsLoaded()));
+}
+
+void MainWindow::addNodeElementFromClient(Id const &diagram, QString const &name, bool isRootDiagramNode)
+{
+    EditorManagerInterface *emi = &(this->editorManager());
+    emi->addNodeElement(diagram, name, isRootDiagramNode);
+    loadPlugins();
+}
+
+void MainWindow::addEdgeElementFromClient(Id const &diagram, QString const &name, QString const &labelText
+           , QString const &labelType, QString const &lineType
+           , QString const &beginType, QString const &endType)
+{
+    EditorManagerInterface *emi = &(this->editorManager());
+    emi->addEdgeElement(diagram, name, labelText, labelType, lineType, beginType, endType);
+    loadPlugins();
 }
 
 void MainWindow::changeRoleInWindowTitle()
@@ -341,6 +399,7 @@ void MainWindow::loadPlugins()
             , SettingsManager::value("PaletteIconsInARowCount").toInt()
             , &mEditorManagerProxy);
     SettingsManager::setValue("EditorsLoadedCount", mEditorManagerProxy.editors().count());
+//    emit pluginsWereLoaded();
 }
 
 void MainWindow::clearSelectionOnTabs()
@@ -1056,6 +1115,22 @@ void MainWindow::showPreferencesDialog()
 void MainWindow::qq(int exRole, QString addr)
 {
     mModels->roleChanged(exRole, addr);
+//    switch(exRole)
+//    {
+//    case 1:
+//    {
+
+//    }
+//        break;
+//    case 2:
+//    {
+//        connect(mModels->getServer(), SIGNAL(diagramCreated(QString)), mStartWidget, SLOT(createDiagramFromClient(QString)));
+//    }
+//        break;
+//    default:
+//        break;
+
+//    }
 }
 
 void MainWindow::initSettingsManager()

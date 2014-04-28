@@ -146,6 +146,29 @@ QString LogicalModel::pathToItem(AbstractModelItem const *item) const
         return Id::rootId().toString();
 }
 
+void LogicalModel::justAddElementToModel(const Id &parent, const Id &id, const Id &logicalId
+        , QString const &name, const QPointF &position)
+{
+    if (mModelItems.contains(id))
+        return;
+
+    Q_ASSERT_X(mModelItems.contains(parent), "addElementToModel", "Adding element to non-existing parent");
+    AbstractModelItem *parentItem = mModelItems[parent];
+    AbstractModelItem *newItem = NULL;
+
+    if (logicalId != Id::rootId() && mModelItems.contains(logicalId)) {
+         if (parent == logicalId) {
+             return;
+        } else {
+            changeParent(index(mModelItems[logicalId]), index(parentItem), QPointF());
+        }
+    } else {
+        newItem = createModelItem(id, parentItem);
+        initializeElement(id, parentItem, newItem, name, position);
+        //emit elementAdded("l", parent.toString(), id.toString(), logicalId.toString(), name, position);
+    }
+}
+
 void LogicalModel::addElementToModel(const Id &parent, const Id &id, const Id &logicalId
         , QString const &name, const QPointF &position)
 {
@@ -165,7 +188,7 @@ void LogicalModel::addElementToModel(const Id &parent, const Id &id, const Id &l
     } else {
         newItem = createModelItem(id, parentItem);
         initializeElement(id, parentItem, newItem, name, position);
-        emit elementAdded(parent.toString(), id.toString(), logicalId.toString(), name, position);
+        emit elementAdded("l|", parent.toString(), id.toString(), logicalId.toString(), name, position);
     }
 }
 
@@ -216,6 +239,32 @@ QVariant LogicalModel::data(const QModelIndex &index, int role) const
     }
 }
 
+bool LogicalModel::justSetData(const Id &id, const QVariant &value, int role)
+{
+    switch (role) {
+    case Qt::DisplayRole:
+    case Qt::EditRole:
+        mApi.setName(id, value.toString());
+        break;
+    case roles::fromRole:
+        mApi.setFrom(id, value.value<Id>());
+        break;
+    case roles::toRole:
+        mApi.setTo(id, value.value<Id>());
+        break;
+    default:
+        if (role >= roles::customPropertiesBeginRole) {
+            QString selectedProperty = findPropertyName(id, role);
+            mApi.setProperty(id, selectedProperty, value);
+            break;
+        }
+        Q_ASSERT(role < Qt::UserRole);
+        return false;
+    }
+    //emit dataChanged(index, index);
+    return true;
+}
+
 bool LogicalModel::setData(const QModelIndex &index, const QVariant &value, int role)
 {
     if (index.isValid()) {
@@ -241,7 +290,7 @@ bool LogicalModel::setData(const QModelIndex &index, const QVariant &value, int 
             return false;
         }
         emit dataChanged(index, index);
-        emit smthChanged(item->id().toString(), value, role);
+        emit smthChanged("l|", item->id().toString(), value, role);
         return true;
     }
     return false;

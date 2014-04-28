@@ -17,8 +17,12 @@ PreferencesMiscellaniousPage::PreferencesMiscellaniousPage(QWidget *parent)
 
     mUi->colorComboBox->addItems(QColor::colorNames());
 
-    mExRole = 0;
-    //mUi->ipAddressEdit->setDisabled(1);
+    mExRole = SettingsManager::value("role").toInt();
+    if(mExRole != 1) {
+        mUi->ipAddressEdit->setDisabled(1);
+    } else {
+        mUi->ipAddressEdit->setText(SettingsManager::value("lastServerAddress").toString());
+    }
     connect(mUi->clientRole, SIGNAL(clicked()), this, SLOT(enableIpAddressEdit()));
     connect(mUi->serverRole, SIGNAL(clicked()), this, SLOT(disableIpAddressEdit()));
     connect(mUi->standAloneRole, SIGNAL(clicked()), this, SLOT(disableIpAddressEdit()));
@@ -92,10 +96,12 @@ void PreferencesMiscellaniousPage::save()
     else if(mUi->standAloneRole->isChecked()) {
         curRole = 0;
     }
-    SettingsManager::setValue("role",  curRole);
-    //qDebug() << "save" << addr;
-    SettingsManager::setValue("lastServerAddress", addr);
     if(curRole != mExRole) {
+        SettingsManager::setValue("role",  curRole);
+        if (curRole == 1) {
+            SettingsManager::setValue("lastServerAddress", addr);
+        }
+//        qDebug << "miscel role changed";
         emit newRole(mExRole, addr);
         mExRole = curRole;
     }

@@ -9,6 +9,7 @@ Id Id::loadFromString(QString const &string)
 {
 	QStringList const path = string.split('/');
 	Q_ASSERT(path.count() > 0 && path.count() <= 5);
+    //qDebug() << "String: "  << string;
 	Q_ASSERT(path[0] == "qrm:");
 
 	Id result;
