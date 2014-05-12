@@ -624,14 +624,15 @@ bool EditorManager::isRootDiagramNode(Id const &id) const
 	return false;
 }
 
-void EditorManager::addNodeElement(Id const &diagram, QString const &name, bool isRootDiagramNode)
+QString EditorManager::addNodeElement(Id const &diagram, QString const &name, bool isRootDiagramNode)
 {
 	Q_UNUSED(diagram);
 	Q_UNUSED(name);
 	Q_UNUSED(isRootDiagramNode);
+    return "";
 }
 
-void EditorManager::addEdgeElement(Id const &diagram, QString const &name, QString const &labelText
+QString EditorManager::addEdgeElement(Id const &diagram, QString const &name, QString const &labelText
         , QString const &labelType, QString const &lineType, QString const &beginType, QString const &endType)
 {
 	Q_UNUSED(diagram);
@@ -641,6 +642,31 @@ void EditorManager::addEdgeElement(Id const &diagram, QString const &name, QStri
 	Q_UNUSED(lineType);
 	Q_UNUSED(beginType);
 	Q_UNUSED(endType);
+    return "";
+}
+
+void EditorManager::addEdgeElementFromClient(Id const &diagram, QString const &name, QString const &labelText
+                              , QString const &labelType, QString const &lineType
+                              , QString const &beginType, QString const &endType
+                              , Id const &edgeId, Id const &associationId)
+{
+    Q_UNUSED(diagram);
+    Q_UNUSED(name);
+    Q_UNUSED(labelText);
+    Q_UNUSED(labelType);
+    Q_UNUSED(lineType);
+    Q_UNUSED(beginType);
+    Q_UNUSED(endType);
+    Q_UNUSED(edgeId);
+    Q_UNUSED(associationId);
+}
+
+void EditorManager::addNodeElementFromClient(Id const &diagram, QString const &name, bool isRootDiagramNode, Id const &nodeId)
+{
+    Q_UNUSED(diagram);
+    Q_UNUSED(name);
+    Q_UNUSED(isRootDiagramNode);
+    Q_UNUSED(nodeId);
 }
 
 QPair<Id, Id> EditorManager::createEditorAndDiagram(QString const &name)
@@ -658,17 +684,3 @@ QString EditorManager::saveMetamodelFilePath() const
 {
 	return "";
 }
-
-//void EditorManager::addNodeElementFromClient(Id const &diagram, QString const &name, bool isRootDiagramNode)
-//{
-//    EditorManagerInterface::addNodeElement(diagram, name, isRootDiagramNode);
-//    qReal::MainWindow::loadPlugins();
-//}
-
-//void EditorManager::addEdgeElementFromClient(Id const &diagram, QString const &name, QString const &labelText
-//            , QString const &labelType, QString const &lineType
-//            , QString const &beginType, QString const &endType)
-//{
-//    EditorManagerInterface::addEdgeElement(diagram, name, labelText, labelType, lineType, beginType, endType);
-//    qReal::MainWindow::loadPlugins();
-//}

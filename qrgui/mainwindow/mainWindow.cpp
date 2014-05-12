@@ -140,6 +140,7 @@ MainWindow::MainWindow(QString const &fileToOpen)
     mFilterObject = new FilterObject();
     connectActionsForUXInfo();
     connectActions();
+
     initExplorers();
 
     // So now we are going to load plugins. The problem is that if we will do it
@@ -157,7 +158,7 @@ MainWindow::MainWindow(QString const &fileToOpen)
     mUsabilityTestingToolbar->addAction(mStartTest);
     mUsabilityTestingToolbar->addAction(mFinishTest);
     addToolBar(Qt::TopToolBarArea, mUsabilityTestingToolbar);
-    setUsabilityMode(SettingsManager::value("usabilityTestingMode").toBool());
+    setUsabilityMode(SettingsManager::value("usabilityTestingMode").toBool());    
 }
 
 void MainWindow::connectActionsForUXInfo()
@@ -269,9 +270,11 @@ void MainWindow::setConnection(int role)
     {
     case 1:
         connect (mModels->getClient(), SIGNAL(connectedToServer()), this, SLOT(connectAsClient()));
+//        connectAsClient();
         break;
     case 2:
         connect (mModels->getServer(), SIGNAL(connectedToClient()), this, SLOT(connectAsServer()));
+//        connectAsServer();
         break;
     default:
         break;
@@ -281,41 +284,68 @@ void MainWindow::setConnection(int role)
 void MainWindow::connectAsServer()
 {
     qDebug() << "Attention! minwindow connectAsSrv";
+    connect(mModels->getServer(), SIGNAL(logicalModelChanged(Id,QVariant,int)), mModels->getLogicalModel(), SLOT(justSetData(Id,QVariant,int)));
+    connect(mModels->getServer(), SIGNAL(logicalModelElementAdded(Id,Id,Id,QString,QPointF)), mModels->getLogicalModel(), SLOT(justAddElementToModel(Id,Id,Id,QString,QPointF)));
+
+    connect(mModels->getServer(), SIGNAL(graphicalModelChanged(Id,QVariant,int)), mModels->getGraphicalModel(), SLOT(justSetData(Id,QVariant,int)));
+    connect(mModels->getServer(), SIGNAL(graphicalModelElementAdded(Id,Id,Id,QString,QPointF)), this, SLOT(graphicalAddElement(Id,Id,Id,QString,QPointF)));
+
     connect(mModels->getServer(), SIGNAL(diagramCreated(QString)), mStartWidget, SLOT(createDiagramFromClient(QString)));
     EditorManagerInterface *emi = &(this->editorManager());
     connect(mModels->getServer(), SIGNAL(propDeleted(QString)), emi, SLOT(deleteProperty(QString)));
     connect(mModels->getServer(), SIGNAL(propUpdated(Id,QString,QString,QString,QString)), emi, SLOT(updateProperties(Id,QString,QString,QString,QString)));
     connect(mModels->getServer(), SIGNAL(shapeUpdated(Id,QString)), emi, SLOT(updateShape(Id,QString)));
-    connect(mModels->getServer(), SIGNAL(nodeAdded(Id,QString,bool)), this, SLOT(addNodeElementFromClient(Id,QString,bool)));
-    connect(mModels->getServer(), SIGNAL(edgeAdded(Id,QString,QString,QString,QString,QString,QString)), this, SLOT(addEdgeElementFromClient(Id,QString,QString,QString,QString,QString,QString)));
+    connect(mModels->getServer(), SIGNAL(nodeAdded(Id,QString,bool,Id)), this, SLOT(addNodeFromClient(Id,QString,bool,Id)));
+    connect(mModels->getServer(), SIGNAL(edgeAdded(Id,QString,QString,QString,QString,QString,QString,Id,Id)), this, SLOT(addEdgeFromClient(Id,QString,QString,QString,QString,QString,QString,Id,Id)));
+    connect(mModels->getServer(), SIGNAL(elementDeleted(Id)), this, SLOT(deleteElementFromClient(Id)));
     connect(mModels->getServer(), SIGNAL(propAdded(Id,QString)), emi, SLOT(addProperty(Id,QString)));
-//    connect(mModels->getServer(), SIGNAL(pluginsWereLoaded()), this, SLOT(loadPlugins()));
 }
+
+void MainWindow::graphicalAddElement(const Id &parent, const Id &id
+                                     , const Id &logicalId, QString const &name, const QPointF &position)
+{
+    mModels->getLogicalModel()->justAddElementToModel(parent, logicalId, logicalId, name, position);
+    mModels->getGraphicalModel()->justAddElementToModel(parent, id, logicalId, name, position);
+}
+
 
 void MainWindow::connectAsClient()
 {
     qDebug() << "Attention! connectAsClient";
+    connect(mModels->getLogicalModel(), SIGNAL(smthChanged(QString,QString,QVariant,int)), mModels->getClient(), SLOT(onDataChanged(QString,QString,QVariant,int)));
+    connect(mModels->getLogicalModel(), SIGNAL(elementAdded(QString,QString,QString,QString,QString,QPointF)), mModels->getClient(), SLOT(onElementAdded(QString,QString,QString,QString,QString,QPointF)));
+
+    connect(mModels->getGraphicalModel(), SIGNAL(smthChanged(QString,QString,QVariant,int)), mModels->getClient(), SLOT(onDataChanged(QString,QString,QVariant,int)));
+    connect(mModels->getGraphicalModel(), SIGNAL(elementAdded(QString,QString,QString,QString,QString,QPointF)), mModels->getClient(), SLOT(onElementAdded(QString,QString,QString,QString,QString,QPointF)));
+
     EditorManagerInterface *emi = &(this->editorManager());
     Q_ASSERT(emi != NULL);
     connect(emi, SIGNAL(metaModelChanged(QString)), mModels->getClient(), SLOT(onMetaModelChanged(QString)));
     connect(mStartWidget, SIGNAL(diagramCreated(QString)), mModels->getClient(), SLOT(onDiagramCreated(QString)));
-//    connect(this, SIGNAL(pluginsWereLoaded()), mModels->getClient(), SLOT(onPluginsLoaded()));
 }
 
-void MainWindow::addNodeElementFromClient(Id const &diagram, QString const &name, bool isRootDiagramNode)
+void MainWindow::addNodeFromClient(Id const &diagram, QString const &name, bool isRootDiagramNode, Id const &nodeId)
 {
     EditorManagerInterface *emi = &(this->editorManager());
-    emi->addNodeElement(diagram, name, isRootDiagramNode);
+//    emi->addNodeElement(diagram, name, isRootDiagramNode);
+    emi->addNodeElementFromClient(diagram, name, isRootDiagramNode, nodeId);
     loadPlugins();
 }
 
-void MainWindow::addEdgeElementFromClient(Id const &diagram, QString const &name, QString const &labelText
+void MainWindow::addEdgeFromClient(Id const &diagram, QString const &name, QString const &labelText
            , QString const &labelType, QString const &lineType
-           , QString const &beginType, QString const &endType)
+           , QString const &beginType, QString const &endType, Id const &edgeId, Id const &associationId)
 {
     EditorManagerInterface *emi = &(this->editorManager());
-    emi->addEdgeElement(diagram, name, labelText, labelType, lineType, beginType, endType);
+    emi->addEdgeElementFromClient(diagram, name, labelText, labelType, lineType, beginType, endType, edgeId, associationId);
     loadPlugins();
+}
+
+void MainWindow::deleteElementFromClient(Id const &id)
+{
+   EditorManagerInterface *emi = &(this->editorManager());
+   emi->deleteElement(this, id);
+   loadPlugins();
 }
 
 void MainWindow::changeRoleInWindowTitle()
@@ -1115,22 +1145,6 @@ void MainWindow::showPreferencesDialog()
 void MainWindow::qq(int exRole, QString addr)
 {
     mModels->roleChanged(exRole, addr);
-//    switch(exRole)
-//    {
-//    case 1:
-//    {
-
-//    }
-//        break;
-//    case 2:
-//    {
-//        connect(mModels->getServer(), SIGNAL(diagramCreated(QString)), mStartWidget, SLOT(createDiagramFromClient(QString)));
-//    }
-//        break;
-//    default:
-//        break;
-
-//    }
 }
 
 void MainWindow::initSettingsManager()
@@ -2021,6 +2035,7 @@ void MainWindow::initPluginsAndStartWidget()
     {
         openStartTab();
     }
+    qq(0, SettingsManager::value("lastServerAddress").toString());
 }
 
 void MainWindow::addActionOrSubmenu(QMenu *target, ActionInfo const &actionOrMenu)

@@ -188,7 +188,7 @@ void LogicalModel::addElementToModel(const Id &parent, const Id &id, const Id &l
     } else {
         newItem = createModelItem(id, parentItem);
         initializeElement(id, parentItem, newItem, name, position);
-        emit elementAdded("l|", parent.toString(), id.toString(), logicalId.toString(), name, position);
+        emit elementAdded("addElem|l|", parent.toString(), id.toString(), logicalId.toString(), name, position);
     }
 }
 
@@ -241,28 +241,7 @@ QVariant LogicalModel::data(const QModelIndex &index, int role) const
 
 bool LogicalModel::justSetData(const Id &id, const QVariant &value, int role)
 {
-    switch (role) {
-    case Qt::DisplayRole:
-    case Qt::EditRole:
-        mApi.setName(id, value.toString());
-        break;
-    case roles::fromRole:
-        mApi.setFrom(id, value.value<Id>());
-        break;
-    case roles::toRole:
-        mApi.setTo(id, value.value<Id>());
-        break;
-    default:
-        if (role >= roles::customPropertiesBeginRole) {
-            QString selectedProperty = findPropertyName(id, role);
-            mApi.setProperty(id, selectedProperty, value);
-            break;
-        }
-        Q_ASSERT(role < Qt::UserRole);
-        return false;
-    }
-    //emit dataChanged(index, index);
-    return true;
+    return setData(indexById(id), value, role);
 }
 
 bool LogicalModel::setData(const QModelIndex &index, const QVariant &value, int role)
@@ -290,7 +269,7 @@ bool LogicalModel::setData(const QModelIndex &index, const QVariant &value, int 
             return false;
         }
         emit dataChanged(index, index);
-        emit smthChanged("l|", item->id().toString(), value, role);
+        emit smthChanged("setData|l|", item->id().toString(), value, role);
         return true;
     }
     return false;

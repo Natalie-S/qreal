@@ -4,6 +4,8 @@
 #include <QtNetwork/QHostAddress>
 #include <cstdio>
 #include <QMessageBox>
+#include <QFile>
+#include <QTextStream>
 #include "models/details/collaborativeDevelopement/valuesSerializer.h"
 
 //class ValueSerializer;
@@ -32,20 +34,10 @@ class Client : public QObject
         void onElementAdded(const QString &modelIdentifier, const QString &parent, const QString &id, const QString &logicalId, QString const &name
                                      , QPointF const &position);
         void onDiagramCreated(QString const &name);
-//        void onPluginsLoaded();
-//        void onNodeAdded(QString const &diagram, QString const &name, bool isDiagramNode);
-//        void onEdgeAdded(
-//                QString const &diagram
-//                , QString const &name
-//                , QString const &labelText
-//                , QString const &labelType
-//                , QString const &lineType
-//                , QString const &beginType
-//                , QString const &endType
-//                );
     private:
         QTcpSocket *mSocket;
         void sendMsg(QString buf);
+        QTextStream *mOutStream;
 };
 
 }

@@ -128,7 +128,7 @@ void GraphicalModel::addElementToModel(const Id &parent, const Id &id
 	}
 
     initializeElement(id, actualLogicalId, parentItem, newGraphicalModelItem, name, position);
-    emit elementAdded("g|", parent.toString(), id.toString(), logicalId.toString(), name, position);
+    emit elementAdded("addElem|g|", parent.toString(), id.toString(), logicalId.toString(), name, position);
 }
 
 void GraphicalModel::initializeElement(const Id &id, const Id &logicalId
@@ -192,41 +192,7 @@ QVariant GraphicalModel::data(const QModelIndex &index, int role) const
 
 bool GraphicalModel::justSetData(const Id &id, const QVariant &value, int role)
 {
-    switch (role) {
-    case Qt::DisplayRole:
-    case Qt::EditRole:
-        setNewName(id, value.toString());
-        break;
-    case roles::positionRole:
-        mApi.setPosition(id, value);
-        break;
-    case roles::configurationRole:
-        mApi.setConfiguration(id, value);
-        break;
-    case roles::fromRole:
-        mApi.setFrom(id, value.value<Id>());
-        break;
-    case roles::toRole:
-        mApi.setTo(id, value.value<Id>());
-        break;
-    case roles::fromPortRole:
-        mApi.setFromPort(id, value.toDouble());
-        break;
-    case roles::toPortRole:
-        mApi.setToPort(id, value.toDouble());
-        break;
-    default:
-        if (role >= roles::customPropertiesBeginRole) {
-            QString selectedProperty = findPropertyName(id, role);
-            mApi.setProperty(id, selectedProperty, value);
-            break;
-        }
-        Q_ASSERT(role < Qt::UserRole);
-        return false;
-    }
-    //emit dataChanged(index, index);
-    //emit smthChanged("g", item->id().toString(), value, role);
-    return true;
+    return setData(indexById(id), value, role);
 }
 
 bool GraphicalModel::setData(const QModelIndex &index, const QVariant &value, int role)
@@ -266,7 +232,7 @@ bool GraphicalModel::setData(const QModelIndex &index, const QVariant &value, in
 			return false;
 		}
 		emit dataChanged(index, index);
-        emit smthChanged("g|", item->id().toString(), value, role);
+        emit smthChanged("setData|g|", item->id().toString(), value, role);
 		return true;
 	}
 	return false;

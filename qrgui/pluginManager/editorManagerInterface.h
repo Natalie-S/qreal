@@ -114,14 +114,15 @@ public slots:
             , QString const &propertyDefaultValue, QString const &propertyDisplayedName) = 0;
     virtual void updateShape(Id const &id, QString const &graphics) = 0;
     virtual void deleteElement(MainWindow *mainWindow, Id const &id) = 0;
-    virtual void addNodeElement(Id const &diagram, QString const &name, bool isRootDiagramNode) = 0;
-    virtual void addEdgeElement(Id const &diagram, QString const &name, QString const &labelText
+    virtual QString addNodeElement(Id const &diagram, QString const &name, bool isRootDiagramNode) = 0;
+    virtual QString addEdgeElement(Id const &diagram, QString const &name, QString const &labelText
             , QString const &labelType, QString const &lineType
             , QString const &beginType, QString const &endType) = 0;
-//    virtual void addNodeElementFromClient(Id const &diagram, QString const &name, bool isRootDiagramNode) = 0;
-//    virtual void addEdgeElementFromClient(Id const &diagram, QString const &name, QString const &labelText
-//            , QString const &labelType, QString const &lineType
-//            , QString const &beginType, QString const &endType) = 0;
+    virtual void addEdgeElementFromClient(Id const &diagram, QString const &name, QString const &labelText
+                                  , QString const &labelType, QString const &lineType
+                                  , QString const &beginType, QString const &endType
+                                  , Id const &edgeId, Id const &associationId) = 0;
+    virtual void addNodeElementFromClient(Id const &diagram, QString const &name, bool isRootDiagramNode, Id const &nodeId) = 0;
 };
 
 }

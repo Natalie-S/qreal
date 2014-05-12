@@ -96,17 +96,7 @@ public:
 //    void updateShape(Id const &id, QString const &graphics) override;
 //    void deleteElement(qReal::MainWindow *mainWindow, Id const &id) override;
 	bool isRootDiagramNode(Id const &id) const override;
-//    void addNodeElement(Id const &diagram, QString const &name, bool isRootDiagramNode) override;
 
-//	void addEdgeElement(
-//			Id const &diagram
-//			, QString const &name
-//			, QString const &labelText
-//			, QString const &labelType
-//			, QString const &lineType
-//			, QString const &beginType
-//			, QString const &endType
-//            ) override;
 
 	void saveMetamodel(QString const &newMetamodelFileName) override;
 	QString saveMetamodelFilePath() const override;
@@ -119,8 +109,6 @@ public:
 	Pattern getPatternByName (QString const &str) const override;
 	QList<QString> getPatternNames() const override;
     QSize iconSize(Id const &id) const override;
-
-//public slots:
     QPair<Id, Id> createEditorAndDiagram(QString const &name) override;
     QMap<QString, qrRepo::RepoApi*> getEditorRepoApi();
 
@@ -147,60 +135,23 @@ private:
 	QString valueOfProperty(Id const &id, QString const &propertyName, QString const &value) const;
 	void deletePropertyInElement(qrRepo::RepoApi *repo, Id const &editor, Id const &diagram
 			, QString const &propDisplayedName) const;
-//signals:
-//    void nodeAdded(QString const &diagram, QString const &name, bool isDiagramNode);
-//    void edgeAdded(
-//            QString const &diagram
-//            , QString const &name
-//            , QString const &labelText
-//            , QString const &labelType
-//            , QString const &lineType
-//            , QString const &beginType
-//            , QString const &endType
-//            );
-
-//    void propertyDeleted(QString const &propDisplayedName);
-//    void propertyAdded(QString const &id, QString const &propDisplayedName);
-//    void propertyUpdated(QString const &id, QString const &property, QString const &propertyType
-//            , QString const &propertyDefaultValue, QString const &propertyDisplayedName);
-
-//    void shapeUpdated(QString const &id, QString const &graphics);
-////	void elementDeleted(qReal::MainWindow *mainWindow, Id const &id);
-
-
 
 public slots:
-//    void onPropDeleted(QString const &propDisplayedName);
-//    void onPropAdded(Id const &id, QString const &propDisplayedName);
-//    void onPropUpdated(Id const &id, QString const &property, QString const &propertyType
-//            , QString const &propertyDefaultValue, QString const &propertyDisplayedName);
-//    void onShapeUpdated(Id const &id, QString const &graphics);
-//    //void deleteElement(qReal::MainWindow *mainWindow, Id const &id) override;
-//    void onNodeAdded(Id const &diagram, QString const &name, bool isRootDiagramNode);
-
-//    void onEdgeAdded(
-//            Id const &diagram
-//            , QString const &name
-//            , QString const &labelText
-//            , QString const &labelType
-//            , QString const &lineType
-//            , QString const &beginType
-//            , QString const &endType
-//            );
     void deleteProperty(QString const &propDisplayedName) override;
     void addProperty(Id const &id, QString const &propDisplayedName) override;
     void updateProperties(Id const &id, QString const &property, QString const &propertyType
             , QString const &propertyDefaultValue, QString const &propertyDisplayedName) override;
     void updateShape(Id const &id, QString const &graphics) override;
     void deleteElement(MainWindow *mainWindow, Id const &id) override;
-    void addNodeElement(Id const &diagram, QString const &name, bool isRootDiagramNode) override;
-    void addEdgeElement(Id const &diagram, QString const &name, QString const &labelText
+    QString addNodeElement(Id const &diagram, QString const &name, bool isRootDiagramNode) override;
+    QString addEdgeElement(Id const &diagram, QString const &name, QString const &labelText
             , QString const &labelType, QString const &lineType, QString const &beginType
             , QString const &endType) override;
-//    void addNodeElementFromClient(Id const &diagram, QString const &name, bool isRootDiagramNode) override;
-//    void addEdgeElementFromClient(Id const &diagram, QString const &name, QString const &labelText
-//                , QString const &labelType, QString const &lineType
-//                , QString const &beginType, QString const &endType) override;
+    void addEdgeElementFromClient(Id const &diagram, QString const &name, QString const &labelText
+                                  , QString const &labelType, QString const &lineType
+                                  , QString const &beginType, QString const &endType
+                                  , const Id &edgeId, const Id &associationId);
+    void addNodeElementFromClient(Id const &diagram, QString const &name, bool isRootDiagramNode, Id const &nodeId);
 };
 
 }

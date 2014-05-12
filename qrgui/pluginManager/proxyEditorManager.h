@@ -96,8 +96,8 @@ public:
     void updateShape(Id const &id, QString const &graphics) override;
     void deleteElement(MainWindow *mainWindow, Id const &id) override;
 	bool isRootDiagramNode(Id const &id) const override;
-    void addNodeElement(Id const &diagram, QString const &name, bool isRootDiagramNode) override;
-	void addEdgeElement(Id const &diagram, QString const &name, QString const &labelText, QString const &labelType
+    QString addNodeElement(Id const &diagram, QString const &name, bool isRootDiagramNode) override;
+    QString addEdgeElement(Id const &diagram, QString const &name, QString const &labelText, QString const &labelType
             , QString const &lineType, QString const &beginType, QString const &endType) override;
     QPair<Id, Id> createEditorAndDiagram(QString const &name) override;
 	void saveMetamodel(QString const &newMetamodelFileName) override;
@@ -114,10 +114,11 @@ public:
 	QSize iconSize(Id const &id) const override;
 
     EditorManagerInterface *getEditorManager();
-//    void addNodeElementFromClient(Id const &diagram, QString const &name, bool isRootDiagramNode) override;
-//    void addEdgeElementFromClient(Id const &diagram, QString const &name, QString const &labelText
-//                , QString const &labelType, QString const &lineType
-//                , QString const &beginType, QString const &endType) override;
+    void addEdgeElementFromClient(Id const &diagram, QString const &name, QString const &labelText
+                                  , QString const &labelType, QString const &lineType
+                                  , QString const &beginType, QString const &endType
+                                  , const Id &edgeId, const Id &associationId);
+    void addNodeElementFromClient(Id const &diagram, QString const &name, bool isRootDiagramNode, Id const &nodeId);
 
 private:
 	EditorManagerInterface *mProxiedEditorManager;  // Has ownership.

@@ -39,6 +39,8 @@ public:
     void makeItServer();
     models::details::collaborativeDevelopment::Client *getClient();
     models::details::collaborativeDevelopment::Server *getServer();
+    models::details::GraphicalModel *getGraphicalModel();
+    models::details::LogicalModel *getLogicalModel();
 signals:
     void roleWasSet(int role);
 

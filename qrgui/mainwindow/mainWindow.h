@@ -172,10 +172,11 @@ signals:
 //    void pluginsWereLoaded();
 
 public slots:
-    void addNodeElementFromClient(Id const &diagram, QString const &name, bool isRootDiagramNode);
-    void addEdgeElementFromClient(Id const &diagram, QString const &name, QString const &labelText
+    void addNodeFromClient(Id const &diagram, QString const &name, bool isRootDiagramNode, Id const &nodeId);
+    void addEdgeFromClient(Id const &diagram, QString const &name, QString const &labelText
                , QString const &labelType, QString const &lineType
-               , QString const &beginType, QString const &endType);
+               , QString const &beginType, QString const &endType
+               , Id const &edgeId, Id const &associationId);
     void deleteFromScene();
     void propertyEditorScrollTo(QModelIndex const &index);
     /// Loads (or reloads) available editor plugins and reinits palette.
@@ -202,10 +203,13 @@ public slots:
     void changeWindowTitle(int index);
 
 private slots:
+    void deleteElementFromClient(Id const &id);
     void setConnection(int role);
     void connectAsClient();
     void connectAsServer();
     void changeRoleInWindowTitle();
+    void graphicalAddElement(const Id &parent, const Id &id
+                                         , const Id &logicalId, QString const &name, const QPointF &position);
     /// Suggests user to select a root diagram for the new project
     /// if more than one diagram loaded or creates project with the only diagram
     /// as root otherwise

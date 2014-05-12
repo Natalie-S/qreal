@@ -26,6 +26,7 @@ public:
     void listen();
     void close();
     void parseSocketMsg(QByteArray const &msg);
+    void emitAddElem(QStringList* params);
 
 signals:
     void logicalModelElementAdded(const Id &parent, const Id &id, const Id &logicalId
@@ -48,7 +49,7 @@ signals:
                      );
 
     void shapeUpdated(Id const &id, QString const &graphics);
-    void nodeAdded(Id const &diagram, QString const &name, bool isRootDiagramNode);
+    void nodeAdded(Id const &diagram, QString const &name, bool isRootDiagramNode, Id nodeId);
     void edgeAdded(
             Id const &diagram
             , QString const &name
@@ -57,12 +58,10 @@ signals:
             , QString const &lineType
             , QString const &beginType
             , QString const &endType
+            , Id edgeId, Id associationId
             );
     void propAdded(Id const &id, QString const &propDisplayedName);
-
-//    void pluginsWereLoaded();
-
-
+    void elementDeleted(Id const &id);
 
 
 public slots:
@@ -72,6 +71,7 @@ public slots:
 private:
     QTcpServer *mServer;
     QTcpSocket *mSocket;
+    QStringList* mTmpStorage;
 };
 
 }
