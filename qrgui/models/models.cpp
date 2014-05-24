@@ -61,22 +61,24 @@ void Models::roleChanged(int exRole, QString addr)
     switch(exRole) {
     case 1:
     {
-        QObject::disconnect(mLogicalModel, SIGNAL(smthChanged(QString,QString,QVariant&,int)), mClient, SLOT(onDataChanged(QString,QString,QVariant&,int)));
-        QObject::disconnect(mLogicalModel, SIGNAL(elementAdded(QString,QString,QString,QString,QString,QPointF)), mClient, SLOT(onElementAdded(QString,QString,QString,QString,QString,QPointF)));
+        QObject::disconnect(mClient, 0, 0, 0);
+//        QObject::disconnect(mLogicalModel, SIGNAL(smthChanged(QString,QString,QVariant&,int)), mClient, SLOT(onDataChanged(QString,QString,QVariant&,int)));
+//        QObject::disconnect(mLogicalModel, SIGNAL(elementAdded(QString,QString,QString,QString,QString,QPointF)), mClient, SLOT(onElementAdded(QString,QString,QString,QString,QString,QPointF)));
 
-        QObject::disconnect(mGraphicalModel, SIGNAL(smthChanged(QString,QString,QVariant&,int)), mClient, SLOT(onDataChanged(QString,QString,QVariant&,int)));
-        QObject::disconnect(mGraphicalModel, SIGNAL(elementAdded(QString,QString,QString,QString,QString,QPointF)), mClient, SLOT(onElementAdded(QString,QString,QString,QString,QString,QPointF)));
+//        QObject::disconnect(mGraphicalModel, SIGNAL(smthChanged(QString,QString,QVariant&,int)), mClient, SLOT(onDataChanged(QString,QString,QVariant&,int)));
+//        QObject::disconnect(mGraphicalModel, SIGNAL(elementAdded(QString,QString,QString,QString,QString,QPointF)), mClient, SLOT(onElementAdded(QString,QString,QString,QString,QString,QPointF)));
         mClient->disconnectFromServer();
         //qDebug() << "I'm not a Client any more!";
     }
         break;
     case 2:
     {
-        QObject::disconnect(mLogicalModel, SIGNAL(smthChanged(QString,QString,QVariant,int)), mClient, SLOT(onDataChanged(QString,QString,QVariant,int)));
-        QObject::disconnect(mLogicalModel, SIGNAL(elementAdded(QString,QString,QString,QString,QString,QPointF)), mClient, SLOT(onElementAdded(QString,QString,QString,QString,QString,QPointF)));
+        QObject::disconnect(mServer, 0, 0, 0);
+//        QObject::disconnect(mLogicalModel, SIGNAL(smthChanged(QString,QString,QVariant,int)), mClient, SLOT(onDataChanged(QString,QString,QVariant,int)));
+//        QObject::disconnect(mLogicalModel, SIGNAL(elementAdded(QString,QString,QString,QString,QString,QPointF)), mClient, SLOT(onElementAdded(QString,QString,QString,QString,QString,QPointF)));
 
-        QObject::disconnect(mGraphicalModel, SIGNAL(smthChanged(QString,QString,QVariant,int)), mClient, SLOT(onDataChanged(QString,QString,QVariant,int)));
-        QObject::disconnect(mGraphicalModel, SIGNAL(elementAdded(QString,QString,QString,QString,QString,QPointF)), mClient, SLOT(onElementAdded(QString,QString,QString,QString,QString,QPointF)));
+//        QObject::disconnect(mGraphicalModel, SIGNAL(smthChanged(QString,QString,QVariant,int)), mClient, SLOT(onDataChanged(QString,QString,QVariant,int)));
+//        QObject::disconnect(mGraphicalModel, SIGNAL(elementAdded(QString,QString,QString,QString,QString,QPointF)), mClient, SLOT(onElementAdded(QString,QString,QString,QString,QString,QPointF)));
         mServer->close();
         //qDebug() << "I'm not a Server any more!";
     }

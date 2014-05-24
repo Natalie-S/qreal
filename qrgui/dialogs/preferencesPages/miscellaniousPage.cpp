@@ -83,6 +83,7 @@ void PreferencesMiscellaniousPage::save()
     SettingsManager::setValue("recentProjectsLimit", mUi->recentProjectsLimitSpinBox->value());
     SettingsManager::setValue("PaintOldEdgeMode", mUi->paintOldLineCheckBox->isChecked());
     SettingsManager::setValue("oldLineColor", mUi->colorComboBox->currentText());
+    SettingsManager::setValue("userName", mUi->userName->text());
 
     int curRole = mExRole;
     QString addr = "";

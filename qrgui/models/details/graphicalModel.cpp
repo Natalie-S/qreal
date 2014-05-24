@@ -126,6 +126,8 @@ void GraphicalModel::addElementToModel(const Id &parent, const Id &id
 		GraphicalModelItem *graphicalParentItem = static_cast<GraphicalModelItem *>(parentItem);
 		newGraphicalModelItem = new GraphicalModelItem(id, logicalId, graphicalParentItem);
 	}
+    qDebug() << "logId        " << logicalId.toString();
+    qDebug() << "actualLogId  " << actualLogicalId.toString();
 
     initializeElement(id, actualLogicalId, parentItem, newGraphicalModelItem, name, position);
     emit elementAdded("addElem|g|", parent.toString(), id.toString(), logicalId.toString(), name, position);

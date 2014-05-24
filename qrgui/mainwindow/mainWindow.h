@@ -165,13 +165,17 @@ public:
     void setTabText(QWidget *tab, QString const &text);
     QString currentRole();
 
+//    static MainWindow* mInstance;
+
+
 signals:
     void gesturesShowed();
     void currentIdealGestureChanged();
     void rootDiagramChanged();
-//    void pluginsWereLoaded();
 
-public slots:
+
+
+public slots:    
     void addNodeFromClient(Id const &diagram, QString const &name, bool isRootDiagramNode, Id const &nodeId);
     void addEdgeFromClient(Id const &diagram, QString const &name, QString const &labelText
                , QString const &labelType, QString const &lineType

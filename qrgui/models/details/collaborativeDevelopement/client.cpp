@@ -32,12 +32,11 @@ void Client::connectToServer(QString addr) {
     qDebug() << "trying to connect to " << addr << " on port " << 1234;
     QHostAddress hostAddress = QHostAddress(addr);
     mSocket->connectToHost(hostAddress, 1234);
-
 }
 
 void Client::sendMsg(QString buf)
 {
-    qDebug() << buf;
+    qDebug() << "sendMsg" <<  buf;
     *mOutStream << buf << "\n";
     QByteArray buffer;
     buffer = buf.toAscii();
@@ -53,6 +52,13 @@ void Client::disconnectFromServer() {
 void Client::onMetaModelChanged(QString const &params)
 {
     sendMsg(params);
+}
+
+void Client::onElementBlocked(QString const &userName, Id const &id, bool state)
+{
+    QStringList params;
+    params << "elemLocked" << userName << id.toString() << (state ? "t" : "f");
+    sendMsg(params.join("|") + "|");
 }
 
 

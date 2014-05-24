@@ -123,6 +123,7 @@ public slots:
                                   , QString const &beginType, QString const &endType
                                   , Id const &edgeId, Id const &associationId) = 0;
     virtual void addNodeElementFromClient(Id const &diagram, QString const &name, bool isRootDiagramNode, Id const &nodeId) = 0;
+    virtual QPair<Id, Id> createEditorAndDiagramFromClient(QString const &name, Id const &editor, Id const &diagram, Id const nodeId, Id const containerLink) = 0;
 };
 
 }

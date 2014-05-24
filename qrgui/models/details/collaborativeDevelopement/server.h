@@ -25,10 +25,9 @@ public:
     explicit Server(QObject *parent = 0);
     void listen();
     void close();
-    void parseSocketMsg(QByteArray const &msg);
-    void emitAddElem(QStringList* params);
 
 signals:
+    void elemStateChanged(QString const &userName, Id const &id, bool state);
     void logicalModelElementAdded(const Id &parent, const Id &id, const Id &logicalId
                                   , QString const &name, const QPointF &position);
     void logicalModelChanged(Id const &id, QVariant const &value, int role);
@@ -36,7 +35,7 @@ signals:
                                   , QString const &name, const QPointF &position);
     void graphicalModelChanged(Id const &id, QVariant const &value, int role);
 
-    void diagramCreated(QString const &name);
+    void diagramCreated(QString const &name, Id const &editor, Id const &diagram, Id const nodeId, Id const containerLink);
 
     void connectedToClient();
 
@@ -49,7 +48,7 @@ signals:
                      );
 
     void shapeUpdated(Id const &id, QString const &graphics);
-    void nodeAdded(Id const &diagram, QString const &name, bool isRootDiagramNode, Id nodeId);
+    void nodeAdded(Id const &diagram, QString const &name, bool isRootDiagramNode, Id const &nodeId);
     void edgeAdded(
             Id const &diagram
             , QString const &name
@@ -69,6 +68,12 @@ public slots:
     void onReadyRead();
     void onDisconnected();
 private:
+    void processSocketMsg(QByteArray const &msg);
+    void emitAddElem(QStringList* params);
+    void emitSetData(QStringList* params);
+    void emitEdgeAdded(QStringList* params);
+    std::vector<QStringList*> divideMsg(QByteArray const &msg);
+    void emitSignals(QStringList* params);
     QTcpServer *mServer;
     QTcpSocket *mSocket;
     QStringList* mTmpStorage;

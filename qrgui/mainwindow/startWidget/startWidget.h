@@ -24,10 +24,10 @@ public:
 	/// Shows or hides interpreter buttons. Also this method can change layout of the
 	/// buttons on start tab.
 	void setVisibleForInterpreterButton(bool const visible);
-signals:
-    void diagramCreated(QString const &name);
+//signals:
+//    void diagramCreated(QString const &name);
 public slots:
-    void createDiagramFromClient(QString const &name);
+    void createDiagramFromClient(QString const &name, Id const &editor, Id const &diagram, Id const nodeId, Id const containerLink);
 
 private slots:
 	void openRecentProject(QString const &fileName);

@@ -826,10 +826,11 @@ void InterpreterEditorManager::updateShape(Id const &id, QString const &graphics
 	QPair<qrRepo::RepoApi*, Id> const repoAndMetaIdPair = repoAndMetaId(id);
 	if (repoAndMetaIdPair.second.element() == "MetaEntityNode") {
 		repoAndMetaIdPair.first->setProperty(repoAndMetaIdPair.second, "shape", graphics);
+
         QStringList params;
         params << "updShape" << id.toString() << graphics;
         emit metaModelChanged(params.join("|") + "|");
-        //qDebug() << params.join("|") + "|";
+        qDebug() << "interp" << params.join("|") + "|";
 	}
 }
 
@@ -962,9 +963,11 @@ QString InterpreterEditorManager::addNodeElement(Id const &diagram, QString cons
 	}
     QStringList params;
     params << "addNode" << diagram.toString() << name << (isRootDiagramNode ? "t" : "f") << nodeId.toString();
-    emit metaModelChanged(params.join("|") + "|");
+    QString parString = params.join("|") + "|";
+//    qDebug() << "parstr" << parString;
+    emit metaModelChanged(parString);
     return nodeId.toString();
-    //qDebug() << params.join("|");
+
 }
 
 QString InterpreterEditorManager::addEdgeElement(Id const &diagram, QString const &name, QString const &labelText
@@ -1025,30 +1028,64 @@ void InterpreterEditorManager::addEdgeElementFromClient(Id const &diagram, QStri
 
 QPair<Id, Id> InterpreterEditorManager::createEditorAndDiagram(QString const &name)
 {
-	Id const editor("MetaEditor", "MetaEditor", "MetamodelDiagram", QUuid::createUuid().toString());
-	Id const diagram("MetaEditor", "MetaEditor", "MetaEditorDiagramNode", QUuid::createUuid().toString());
-	qrRepo::RepoApi * const repo = mEditorRepoApi.value("test");
-	repo->addChild(Id::rootId(), editor);
-	repo->setProperty(editor, "name", name);
-	repo->setProperty(editor, "displayedName", name);
-	repo->addChild(editor, diagram);
-	repo->setProperty(diagram, "name", name);
-	repo->setProperty(diagram, "displayedName", name);
-	repo->setProperty(diagram, "nodeName", name);
-	Id const nodeId("MetaEditor", "MetaEditor", "MetaEntityNode", QUuid::createUuid().toString());
-	repo->addChild(diagram, nodeId);
-	repo->setProperty(nodeId, "name", "AbstractNode");
-	repo->setProperty(nodeId, "displayedName", "AbstractNode");
-	repo->setProperty(nodeId, "shape", "");
-	repo->setProperty(nodeId, "links", IdListHelper::toVariant(IdList()));
-	repo->setProperty(nodeId, "isResizeable", "true");
-	repo->setProperty(nodeId, "isPin", "false");
-	repo->setProperty(nodeId, "isAction", "false");
-	Id const containerLink("MetaEditor", "MetaEditor", "Container", QUuid::createUuid().toString());
-	setStandartConfigurations(repo, containerLink, Id::rootId(), "Container");
-	repo->setFrom(containerLink, nodeId);
+    Id const editor("MetaEditor", "MetaEditor", "MetamodelDiagram", QUuid::createUuid().toString());
+    Id const diagram("MetaEditor", "MetaEditor", "MetaEditorDiagramNode", QUuid::createUuid().toString());
+    qrRepo::RepoApi * const repo = mEditorRepoApi.value("test");
+    repo->addChild(Id::rootId(), editor);
+    repo->setProperty(editor, "name", name);
+    repo->setProperty(editor, "displayedName", name);
+    repo->addChild(editor, diagram);
+    repo->setProperty(diagram, "name", name);
+    repo->setProperty(diagram, "displayedName", name);
+    repo->setProperty(diagram, "nodeName", name);
+    Id const nodeId("MetaEditor", "MetaEditor", "MetaEntityNode", QUuid::createUuid().toString());
+    repo->addChild(diagram, nodeId);
+    repo->setProperty(nodeId, "name", "AbstractNode");
+    repo->setProperty(nodeId, "displayedName", "AbstractNode");
+    repo->setProperty(nodeId, "shape", "");
+    repo->setProperty(nodeId, "links", IdListHelper::toVariant(IdList()));
+    repo->setProperty(nodeId, "isResizeable", "true");
+    repo->setProperty(nodeId, "isPin", "false");
+    repo->setProperty(nodeId, "isAction", "false");
+    Id const containerLink("MetaEditor", "MetaEditor", "Container", QUuid::createUuid().toString());
+    setStandartConfigurations(repo, containerLink, Id::rootId(), "Container");
+    repo->setFrom(containerLink, nodeId);
     repo->setTo(containerLink, nodeId);
-	return qMakePair(Id(repo->name(editor)), Id(repo->name(editor), repo->name(diagram)));
+    QStringList params;
+    params << "diagrCr" << name << editor.toString() << diagram.toString() << nodeId.toString() <<containerLink.toString();
+    emit metaModelChanged(params.join("|") + "|");
+    qDebug() << params.join("|") + "|";
+    return qMakePair(Id(repo->name(editor)), Id(repo->name(editor), repo->name(diagram)));
+}
+
+QPair<Id, Id> InterpreterEditorManager::createEditorAndDiagramFromClient(QString const &name
+                                                                         , Id const &editor
+                                                                         , Id const &diagram
+                                                                         , Id const nodeId
+                                                                         , Id const containerLink)
+{
+    qrRepo::RepoApi * const repo = mEditorRepoApi.value("test");
+    repo->addChild(Id::rootId(), editor);
+    repo->setProperty(editor, "name", name);
+    repo->setProperty(editor, "displayedName", name);
+    repo->addChild(editor, diagram);
+    repo->setProperty(diagram, "name", name);
+    repo->setProperty(diagram, "displayedName", name);
+    repo->setProperty(diagram, "nodeName", name);
+
+    repo->addChild(diagram, nodeId);
+    repo->setProperty(nodeId, "name", "AbstractNode");
+    repo->setProperty(nodeId, "displayedName", "AbstractNode");
+    repo->setProperty(nodeId, "shape", "");
+    repo->setProperty(nodeId, "links", IdListHelper::toVariant(IdList()));
+    repo->setProperty(nodeId, "isResizeable", "true");
+    repo->setProperty(nodeId, "isPin", "false");
+    repo->setProperty(nodeId, "isAction", "false");
+
+    setStandartConfigurations(repo, containerLink, Id::rootId(), "Container");
+    repo->setFrom(containerLink, nodeId);
+    repo->setTo(containerLink, nodeId);
+    return qMakePair(Id(repo->name(editor)), Id(repo->name(editor), repo->name(diagram)));
 }
 
 void InterpreterEditorManager::saveMetamodel(QString const &newMetamodelFileName)

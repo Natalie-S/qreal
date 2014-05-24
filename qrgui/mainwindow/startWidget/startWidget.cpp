@@ -299,12 +299,12 @@ void StartWidget::openInterpretedDiagram()
 	}
 }
 
-void StartWidget::createDiagramFromClient(QString const &name)
+void StartWidget::createDiagramFromClient(QString const &name, Id const &editor, Id const &diagram, Id const nodeId, Id const containerLink)
 {
     hide();
     ProxyEditorManager &editorManagerProxy = mMainWindow->editorManagerProxy();
     editorManagerProxy.setProxyManager(new InterpreterEditorManager(""));
-    QPair<Id, Id> editorAndDiagram = editorManagerProxy.createEditorAndDiagram(name);
+    QPair<Id, Id> editorAndDiagram = editorManagerProxy.createEditorAndDiagramFromClient(name, editor, diagram, nodeId, containerLink);  //.createEditorAndDiagram(name);
     mMainWindow->addEditorElementsToPalette(editorAndDiagram.first, editorAndDiagram.second);
     mMainWindow->models()->repoControlApi().exterminate();
     mMainWindow->models()->reinit();
@@ -330,7 +330,7 @@ void StartWidget::createInterpretedDiagram()
 		mMainWindow->models()->repoControlApi().exterminate();
 		mMainWindow->models()->reinit();
 		mMainWindow->loadPlugins();
-        emit diagramCreated(name);
+//        emit diagramCreated(name);
 	} else {
 		show();
 		editorManagerProxy.setProxyManager(new EditorManager());

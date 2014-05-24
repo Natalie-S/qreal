@@ -119,6 +119,8 @@ public:
                                   , QString const &beginType, QString const &endType
                                   , const Id &edgeId, const Id &associationId);
     void addNodeElementFromClient(Id const &diagram, QString const &name, bool isRootDiagramNode, Id const &nodeId);
+    QPair<Id, Id> createEditorAndDiagramFromClient(QString const &name, Id const &editor, Id const &diagram, Id const nodeId, Id const containerLink);
+
 
 private:
 	EditorManagerInterface *mProxiedEditorManager;  // Has ownership.

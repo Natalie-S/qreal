@@ -610,6 +610,7 @@ void EditorManager::updateShape(Id const &id, QString const &graphics)
 {
 	Q_UNUSED(id);
 	Q_UNUSED(graphics);
+    qDebug() << "editor";
 }
 
 void EditorManager::deleteElement(MainWindow *mainWindow, Id const &id)
@@ -683,4 +684,14 @@ void EditorManager::saveMetamodel(QString const &newMetamodelFileName)
 QString EditorManager::saveMetamodelFilePath() const
 {
 	return "";
+}
+
+QPair<Id, Id> EditorManager::createEditorAndDiagramFromClient(QString const &name, Id const &editor, Id const &diagram, Id const nodeId, Id const containerLink)
+{
+    Q_UNUSED(name);
+    Q_UNUSED(editor);
+    Q_UNUSED(diagram);
+    Q_UNUSED(containerLink);
+    Q_UNUSED(nodeId);
+    return QPair<Id, Id>();
 }

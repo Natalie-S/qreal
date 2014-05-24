@@ -842,7 +842,27 @@ void NodeElement::paint(QPainter *painter, QStyleOptionGraphicsItem const *style
 void NodeElement::paint(QPainter *painter, QStyleOptionGraphicsItem const *option)
 {
 	if (option->levelOfDetail >= 0.5) {
-		if (option->state & QStyle::State_Selected) {
+        if (LockManager::getInstance()->mCurrentlyEditedElements.contains(mId)) {
+            painter->save();
+            painter->setPen(QPen(Qt::green));
+            QRectF rect = boundingRect();
+            int size = 10;
+            double x1 = rect.x() + size;
+            double y1 = rect.y() + size;
+            double x2 = rect.x() + rect.width() - size;
+            double y2 = rect.y() + rect.height() - size;
+            painter->drawRect(QRectF(QPointF(x1, y1), QPointF(x2, y2)));
+            painter->restore();
+            setEnabled(false);
+        } else {
+            setEnabled(true);
+        }
+        if (option->state & QStyle::State_Selected) {
+            if(!mIsSelected)
+            {
+                mIsSelected = true;
+                LockManager::getInstance()->setElementState(mId, false);
+            }
 			painter->save();
 
 			QBrush b;
@@ -871,7 +891,13 @@ void NodeElement::paint(QPainter *painter, QStyleOptionGraphicsItem const *optio
 			}
 
 			painter->restore();
-		}
+        } else {
+            if(mIsSelected)
+            {
+                mIsSelected = false;
+                LockManager::getInstance()->setElementState(mId, true);
+            }
+        }
 
 		drawPorts(painter, option->state & QStyle::State_MouseOver);
 

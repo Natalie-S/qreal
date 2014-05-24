@@ -4,7 +4,7 @@ using namespace qReal;
 
 ProxyEditorManager::ProxyEditorManager(EditorManagerInterface *editorManagerInterface)
 		: mProxiedEditorManager(editorManagerInterface)
-{
+{    
 }
 
 ProxyEditorManager::~ProxyEditorManager()
@@ -227,28 +227,31 @@ bool ProxyEditorManager::isParentProperty(Id const &id, QString const &propertyN
 
 void ProxyEditorManager::deleteProperty(QString const &propDisplayedName)
 {
+    QObject::connect(mProxiedEditorManager, SIGNAL(metaModelChanged(QString)), this, SIGNAL(metaModelChanged(QString)));
 	mProxiedEditorManager->deleteProperty(propDisplayedName);
-    QStringList params;
-    params << "delProp" << propDisplayedName;
-    emit metaModelChanged(params.join("|") + "|");
-    qDebug() << "proxy:    " << params.join("|") + "|";
+//    QStringList params;
+//    params << "delProp" << propDisplayedName;
+//    emit metaModelChanged(params.join("|") + "|");
+//    qDebug() << "proxy:    " << params.join("|") + "|";
 }
 
 void ProxyEditorManager::addProperty(Id const &id, QString const &propDisplayedName)
 {
+    QObject::connect(mProxiedEditorManager, SIGNAL(metaModelChanged(QString)), this, SIGNAL(metaModelChanged(QString)));
 	mProxiedEditorManager->addProperty(id, propDisplayedName);
-    QStringList params;
-    params << "addProp" << id.toString() << propDisplayedName;
-    emit metaModelChanged(params.join("|") + "|");
+//    QStringList params;
+//    params << "addProp" << id.toString() << propDisplayedName;
+//    emit metaModelChanged(params.join("|") + "|");
 }
 
 void ProxyEditorManager::updateProperties(Id const &id, QString const &property, QString const &propertyType
         , QString const &propertyDefaultValue, QString const &propertyDisplayedName)
 {
+    QObject::connect(mProxiedEditorManager, SIGNAL(metaModelChanged(QString)), this, SIGNAL(metaModelChanged(QString)));
 	mProxiedEditorManager->updateProperties(id, property, propertyType, propertyDefaultValue, propertyDisplayedName);
-    QStringList params;
-    params << "updProp" << id.toString() << property << propertyType << propertyDefaultValue << propertyDisplayedName;
-    emit metaModelChanged(params.join("|") + "|");
+//    QStringList params;
+//    params << "updProp" << id.toString() << property << propertyType << propertyDefaultValue << propertyDisplayedName;
+//    emit metaModelChanged(params.join("|") + "|");
 }
 
 QString ProxyEditorManager::propertyNameByDisplayedName(Id const &id, QString const &displayedPropertyName) const
@@ -268,10 +271,12 @@ QString ProxyEditorManager::shape(Id const &id) const
 
 void ProxyEditorManager::updateShape(Id const &id, QString const &graphics)
 {
-	mProxiedEditorManager->updateShape(id, graphics);
+//    QObject::connect(mProxiedEditorManager, SIGNAL(metaModelChanged(QString)), this, SIGNAL(metaModelChanged(QString)));
+	mProxiedEditorManager->updateShape(id, graphics);    
     QStringList params;
     params << "updShape" << id.toString() << graphics;
     emit metaModelChanged(params.join("|") + "|");
+    qDebug() << "proxy" << params.join("|") + "|";
 }
 
 void ProxyEditorManager::deleteElement(MainWindow *mainWindow, Id const &id)
@@ -305,7 +310,7 @@ QString ProxyEditorManager::addNodeElement(Id const &diagram, QString const &nam
 {
     QString res = mProxiedEditorManager->addNodeElement(diagram, name, isRootDiagramNode);
     QStringList params;
-    params << "addNode" << diagram.toString() << name << (isRootDiagramNode ? "t" : "f") + res;
+    params << "addNode" << diagram.toString() << name << (isRootDiagramNode ? "t" : "f") << res;
     emit metaModelChanged(params.join("|") + "|");
     return res;
 }
@@ -322,7 +327,13 @@ QString ProxyEditorManager::addEdgeElement(Id const &diagram, QString const &nam
 
 QPair<Id, Id> ProxyEditorManager::createEditorAndDiagram(QString const &name)
 {
+    QObject::connect(mProxiedEditorManager, SIGNAL(metaModelChanged(QString)), this, SIGNAL(metaModelChanged(QString)));
 	return mProxiedEditorManager->createEditorAndDiagram(name);
+}
+
+QPair<Id, Id> ProxyEditorManager::createEditorAndDiagramFromClient(QString const &name, Id const &editor, Id const &diagram, Id const nodeId, Id const containerLink)
+{
+    return mProxiedEditorManager->createEditorAndDiagramFromClient(name, editor, diagram, nodeId, containerLink);
 }
 
 void ProxyEditorManager::saveMetamodel(QString const &newMetamodelFileName)

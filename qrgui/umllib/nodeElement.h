@@ -12,6 +12,8 @@
 #include <QtCore/QList>
 #include <QtCore/QTimer>
 
+#include "mainwindow/lockmanager.h"
+
 #include "umllib/sdfRenderer.h"
 #include "umllib/element.h"
 #include "umllib/edgeElement.h"
@@ -291,6 +293,8 @@ private:
 	QPointF mPos;
 	bool mSelectionNeeded;
 
+    bool mIsBeingEdited = true;
+
 	bool mConnectionInProgress;
 
 	QList<ContextMenuAction *> mBonusContextMenuActions;
@@ -305,6 +309,8 @@ private:
 
 	QImage mRenderedDiagram;
 	QTimer mRenderTimer;
+
+    bool mIsSelected = false;
 };
 
 }
