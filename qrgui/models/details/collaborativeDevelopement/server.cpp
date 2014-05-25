@@ -10,7 +10,8 @@ Server::Server(QObject *parent) :
 {
     mServer = new QTcpServer(this);
     connect(mServer, SIGNAL(newConnection()), this, SLOT(onNewConnection()));
-    mTmpStorage = new QStringList();
+    mTmpStorage = "";
+    mLastMsg = new QStringList();
 }
 
 //Networking
@@ -40,7 +41,7 @@ void Server::onReadyRead()
 //        qDebug() << ba.constData();
     }
     QByteArray msg = mSocket->readAll();
-    qDebug() << "onReadyread:  " << msg.constData();
+//    qDebug() << "onReadyread:  " << msg.constData();
     processSocketMsg(msg);
 }
 
@@ -57,21 +58,22 @@ void Server::processSocketMsg(QByteArray const &msg)
     std::vector<QStringList*> paramsVector = divideMsg(msg);
     for(unsigned int i = 0; i < paramsVector.size(); i++) {
         QStringList* params = (QStringList*)paramsVector[i];
-        qDebug() << "params" << params->join("|");
-        qDebug() << "mTmpStorage" << mTmpStorage->join("|");
-        if(!mTmpStorage->isEmpty())
-        {
-            if(params->at(0) == "addElem" && params->at(1) == "g") {
-                params->replace(4, mTmpStorage->at(4));
-                emitAddElem(params);
+        if(params->join("|") != mLastMsg->join("|")) {
+//            qDebug() << "params" << params->join("|");
+            if(mTmpStorage != "")
+            {
+                if(params->at(0) == "addElem" && params->at(1) == "g") {
+                    params->replace(4, mTmpStorage);
+                    emitAddElem(params);
+                } else {
+                    emitSignals(params);
+                }
+                mTmpStorage = "";
             } else {
-//                emitAddElem(mTmpStorage);
                 emitSignals(params);
             }
-            mTmpStorage->clear();
-        } else {
-            emitSignals(params);
-        }
+            mLastMsg = params;
+        } else {qDebug() << "SAME!";}
     }
 }
 
@@ -129,7 +131,7 @@ void Server::emitSignals(QStringList* params)
     } else if (params->at(0) == "addElem")
     {
         if(params->at(1) == "l") {
-            mTmpStorage = params;
+            mTmpStorage = params->at(4);
             emitAddElem(params);
         }
 

@@ -172,6 +172,7 @@ signals:
     void gesturesShowed();
     void currentIdealGestureChanged();
     void rootDiagramChanged();
+    void shapeUpdated(QString const &data, QPersistentModelIndex const &index, int const &role);
 
 
 
@@ -205,6 +206,7 @@ public slots:
     void openFirstDiagram();
     void closeTabsWithRemovedRootElements();
     void changeWindowTitle(int index);
+    void updShapeNotification(QString const &shape, QString const &id, int const &role);
 
 private slots:
     void deleteElementFromClient(Id const &id);

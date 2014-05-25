@@ -271,12 +271,12 @@ QString ProxyEditorManager::shape(Id const &id) const
 
 void ProxyEditorManager::updateShape(Id const &id, QString const &graphics)
 {
-//    QObject::connect(mProxiedEditorManager, SIGNAL(metaModelChanged(QString)), this, SIGNAL(metaModelChanged(QString)));
+    QObject::connect(mProxiedEditorManager, SIGNAL(metaModelChanged(QString)), this, SIGNAL(metaModelChanged(QString)));
 	mProxiedEditorManager->updateShape(id, graphics);    
-    QStringList params;
-    params << "updShape" << id.toString() << graphics;
-    emit metaModelChanged(params.join("|") + "|");
-    qDebug() << "proxy" << params.join("|") + "|";
+//    QStringList params;
+//    params << "updShape" << id.toString() << graphics;
+//    emit metaModelChanged(params.join("|") + "|");
+//    qDebug() << "proxy" << params.join("|") + "|";
 }
 
 void ProxyEditorManager::deleteElement(MainWindow *mainWindow, Id const &id)

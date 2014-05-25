@@ -42,6 +42,7 @@ ShapeEdit::ShapeEdit(
 	init();
 	mUi->saveButton->setEnabled(true);
 	connect(this, SIGNAL(saveSignal()), this, SLOT(save()));
+    connect(this, SIGNAL(shapeEd(QString,QString,int)), mMainWindow, SLOT(updShapeNotification(QString,QString,int)));
 }
 
 ShapeEdit::ShapeEdit(
@@ -319,7 +320,10 @@ void ShapeEdit::saveToXml()
 void ShapeEdit::save()
 {
 	generateDom();
-	if (mIndex.isValid()) {
+    if (mIndex.isValid()) {
+        models::details::modelsImplementation::AbstractModelItem *item = static_cast<models::details::modelsImplementation::AbstractModelItem *>(mIndex.internalPointer());
+        QString id = item->id().toString();
+        emit shapeEd(mDocument.toString(4), id, mRole);
 		emit shapeSaved(mDocument.toString(4), mIndex, mRole);
 	} else {
 		mEditorManager->updateShape(mId, mDocument.toString(4));

@@ -76,7 +76,8 @@ private:
     void emitSignals(QStringList* params);
     QTcpServer *mServer;
     QTcpSocket *mSocket;
-    QStringList* mTmpStorage;
+    QString mTmpStorage;
+    QStringList* mLastMsg;
 };
 
 }

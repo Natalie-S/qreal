@@ -12,6 +12,8 @@
 #include "mainwindow/shapeEdit/item.h"
 #include "pluginManager/editorManagerInterface.h"
 
+#include <models/details/modelsImplementation/abstractModelItem.h>
+
 // TODO: lolwut?
 //#include "ui_mainWindow.h"
 
@@ -46,6 +48,7 @@ signals:
 	void saveSignal();
 	void saveToXmlSignal();
 	void openSignal();
+    void shapeEd(QString const &shape, QString const &id, int const &role);
 
 protected:
 	void changeEvent(QEvent *e);

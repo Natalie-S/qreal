@@ -54,6 +54,13 @@ void Client::onMetaModelChanged(QString const &params)
     sendMsg(params);
 }
 
+void Client::onShapeUpdated(QString const &shape, QString const &id, int const &role)
+{
+    QStringList params;
+    params << "updShape" << shape << id << QString::number(role);
+    sendMsg(params.join("|") + "|");
+}
+
 void Client::onElementBlocked(QString const &userName, Id const &id, bool state)
 {
     QStringList params;

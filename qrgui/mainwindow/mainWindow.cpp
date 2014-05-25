@@ -264,6 +264,13 @@ void MainWindow::connectActions()
 
     setDefaultShortcuts();
 }
+
+void MainWindow::updShapeNotification(QString const &shape, QString const &id, int const &role)
+{
+    models::details::collaborativeDevelopment::Client *client = mModels->getClient();
+    client->onShapeUpdated(shape, id, role);
+}
+
 void MainWindow::setConnection(int role)
 {
 //    Q_ASSERT(role != 1 && role != 2);
@@ -271,11 +278,9 @@ void MainWindow::setConnection(int role)
     {
     case 1:
         connect (mModels->getClient(), SIGNAL(connectedToServer()), this, SLOT(connectAsClient()));
-//        connectAsClient();
         break;
     case 2:
         connect (mModels->getServer(), SIGNAL(connectedToClient()), this, SLOT(connectAsServer()));
-//        connectAsServer();
         break;
     default:
         break;
@@ -330,7 +335,6 @@ void MainWindow::connectAsClient()
 void MainWindow::addNodeFromClient(Id const &diagram, QString const &name, bool isRootDiagramNode, Id const &nodeId)
 {
     EditorManagerInterface *emi = &(this->editorManager());
-//    emi->addNodeElement(diagram, name, isRootDiagramNode);
     emi->addNodeElementFromClient(diagram, name, isRootDiagramNode, nodeId);
     loadPlugins();
 }
@@ -432,7 +436,6 @@ void MainWindow::loadPlugins()
             , SettingsManager::value("PaletteIconsInARowCount").toInt()
             , &mEditorManagerProxy);
     SettingsManager::setValue("EditorsLoadedCount", mEditorManagerProxy.editors().count());
-//    emit pluginsWereLoaded();
 }
 
 void MainWindow::clearSelectionOnTabs()
@@ -633,6 +636,7 @@ void MainWindow::setData(QString const &data, QPersistentModelIndex const &index
     // not going to use this index anymore.
     QAbstractItemModel * const model = const_cast<QAbstractItemModel *>(index.model());
     model->setData(index, data, role);
+    emit shapeUpdated(data, index, role);
 }
 
 void MainWindow::print()

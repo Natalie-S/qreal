@@ -28,6 +28,7 @@ class Client : public QObject
         void connectedToServer();
 
     public slots:
+        void onShapeUpdated(QString const &shape, QString const &id, int const &role);
         void onElementBlocked(QString const &userName, Id const &id, bool state);
         void onMetaModelChanged(QString const &params);
         void onConnected();
