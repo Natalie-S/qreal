@@ -48,7 +48,7 @@ public:
     virtual void stackBefore(QModelIndex const &element, QModelIndex const &sibling);
 
 signals:
-    void modelElemChanged(QString const &params);
+//    void modelElemChanged(QString const &params);
     void smthChanged(QString const &modelIdentifier, QString const &id, const QVariant &value, int role);
     void elementAdded(QString const &modelIdentifier
                       , QString const &parent

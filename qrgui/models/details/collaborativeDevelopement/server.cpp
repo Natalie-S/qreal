@@ -132,8 +132,8 @@ void Server::emitSignals(QStringList* params)
     {
         if(params->at(1) == "l") {
             mTmpStorage = params->at(4);
-            emitAddElem(params);
         }
+        emitAddElem(params);
 
     } else if (params->at(0) == "delProp")
     {
