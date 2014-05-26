@@ -265,15 +265,8 @@ void MainWindow::connectActions()
     setDefaultShortcuts();
 }
 
-void MainWindow::updShapeNotification(QString const &shape, QString const &id, int const &role)
-{
-    models::details::collaborativeDevelopment::Client *client = mModels->getClient();
-    client->onShapeUpdated(shape, id, role);
-}
-
 void MainWindow::setConnection(int role)
 {
-//    Q_ASSERT(role != 1 && role != 2);
     switch(role)
     {
     case 1:

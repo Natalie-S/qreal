@@ -206,7 +206,6 @@ public slots:
     void openFirstDiagram();
     void closeTabsWithRemovedRootElements();
     void changeWindowTitle(int index);
-    void updShapeNotification(QString const &shape, QString const &id, int const &role);
 
 private slots:
     void deleteElementFromClient(Id const &id);

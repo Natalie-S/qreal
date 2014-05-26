@@ -47,8 +47,7 @@ signals:
 	void shapeSaved(QString const &shape, QPersistentModelIndex const &index, int const &role);
 	void saveSignal();
 	void saveToXmlSignal();
-	void openSignal();
-    void shapeEd(QString const &shape, QString const &id, int const &role);
+    void openSignal();
 
 protected:
 	void changeEvent(QEvent *e);

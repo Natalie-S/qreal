@@ -202,9 +202,13 @@ std::vector<QStringList*> Server::divideMsg(QByteArray const &msg)
            paramsVector.push_back(list);
        } else {
             size = paramsVector.size() - 1;
-            ((QStringList*)paramsVector[size])->append(splittedParams.at(i));
+            if (size != -1) {
+                ((QStringList*)paramsVector[size])->append(splittedParams.at(i));
+            } else {
+                qDebug() << "Wrong params vector";
             }
         }
+    }
     return paramsVector;
 }
 

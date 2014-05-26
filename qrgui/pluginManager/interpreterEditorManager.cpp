@@ -823,6 +823,7 @@ QString InterpreterEditorManager::shape(Id const &id) const
 
 void InterpreterEditorManager::updateShape(Id const &id, QString const &graphics)
 {
+    qDebug() << "alive" ;
 	QPair<qrRepo::RepoApi*, Id> const repoAndMetaIdPair = repoAndMetaId(id);
 	if (repoAndMetaIdPair.second.element() == "MetaEntityNode") {
 		repoAndMetaIdPair.first->setProperty(repoAndMetaIdPair.second, "shape", graphics);
