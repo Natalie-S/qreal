@@ -14,7 +14,7 @@ Server::Server(QObject *parent) :
     mLastMsg = new QStringList();
 }
 
-//Networking
+///Networking
 void Server::listen() {
     mServer->listen(QHostAddress::LocalHost, 1234);
 }
@@ -60,6 +60,7 @@ void Server::processSocketMsg(QByteArray const &msg)
         QStringList* params = (QStringList*)paramsVector[i];
         if(params->join("|") != mLastMsg->join("|")) {
 //            qDebug() << "params" << params->join("|");
+//            *mStream << params->join("|") << "\n\n";
             if(mTmpStorage != "")
             {
                 if(params->at(0) == "addElem" && params->at(1) == "g") {
@@ -73,23 +74,120 @@ void Server::processSocketMsg(QByteArray const &msg)
                 emitSignals(params);
             }
             mLastMsg = params;
-        } else {qDebug() << "SAME!";}
+        } /*else {qDebug() << "SAME!";}*/
     }
 }
 
-//Auxiliary methods
+///Auxiliary methods
+void Server::emitSignals(QStringList* params)
+{
+    if(params->at(0) == "setData")
+    {
+        emitSetData(params);
+    } else if (params->at(0) == "addElem")
+    {
+        if(params->at(1) == "l") {
+            mTmpStorage = params->at(4);
+        }
+        emitAddElem(params);
+
+    } else if (params->at(0) == "delProp")
+    {
+        emit propDeleted(params->at(1));
+
+    } else if (params->at(0) == "updProp")
+    {
+        emit propUpdated(ValuesSerializer::deserializeId(params->at(1)), params->at(2), params->at(3), params->at(4), params->at(5));
+
+    } else if (params->at(0) == "updShape")
+    {
+//        qDebug() << "id" << params->at(1);
+//        qDebug() << "graphics" << params->at(2);
+        emit shapeUpdated(ValuesSerializer::deserializeId(params->at(1)), params->at(2));
+
+    } else if (params->at(0) == "addNode")
+    {
+        emit nodeAdded(ValuesSerializer::deserializeId(params->at(1)), params->at(2), params->at(3) == "t", ValuesSerializer::deserializeId(params->at(4)));
+
+    } else if (params->at(0) == "addEdge")
+    {
+        emitEdgeAdded(params);
+
+    } else if (params->at(0) == "addProp")
+    {
+        emit propAdded(ValuesSerializer::deserializeId(params->at(1)), params->at(2));
+
+    } else if (params->at(0) == "delElem")
+    {
+        emit elementDeleted(ValuesSerializer::deserializeId(params->at(1)));
+
+    } else if (params->at(0) == "diagrCr")
+    {
+        emit diagramCreated(params->at(1), ValuesSerializer::deserializeId(params->at(2)), ValuesSerializer::deserializeId(params->at(3)),ValuesSerializer::deserializeId(params->at(4)),ValuesSerializer::deserializeId(params->at(5)));
+
+    } else if(params->at(0) == "elemLocked")
+    {
+        QString userName = params->at(1);
+        Id id = ValuesSerializer::deserializeId(params->at(2));
+        bool state = params->at(3) == "t";
+        emit elemStateChanged(userName, id, state);
+    } else if (params->at(0) == "grElemRemoved")
+    {
+        emit graphElemRemoved(ValuesSerializer::deserializeId(params->at(1)));
+    } else if (params->at(0) == "logElemRemoved")
+    {
+        emit logElemRemoved(ValuesSerializer::deserializeId(params->at(1)));
+    }
+}
+
+std::vector<QStringList*> Server::divideMsg(QByteArray const &msg)
+{
+    QString const paramsString = QString::fromAscii(msg);
+    QStringList const splittedParams = paramsString.split('|');
+    std::vector<QStringList*> paramsVector;
+    unsigned int size = 0;
+    for(int i = 0; i < splittedParams.length() - 1; i++) {
+        if(splittedParams.at(i) == "setData"
+                || splittedParams.at(i) == "addElem"
+                || splittedParams.at(i) == "delProp"
+                || splittedParams.at(i) == "updProp"
+                || splittedParams.at(i) == "updShape"
+                || splittedParams.at(i) == "addNode"
+                || splittedParams.at(i) == "addEdge"
+                || splittedParams.at(i) == "addProp"
+                || splittedParams.at(i) == "diagrCr"
+                || splittedParams.at(i) == "delElem"
+                || splittedParams.at(i) == "elemLocked"
+                || splittedParams.at(i) == "grElemRemoved"
+                || splittedParams.at(i) == "logElemRemoved"
+               ) {
+           QStringList* list = new QStringList();
+           list->append(splittedParams.at(i));
+           paramsVector.push_back(list);
+       } else {
+            size = paramsVector.size() - 1;
+            if (size != -1) {
+                ((QStringList*)paramsVector[size])->append(splittedParams.at(i));
+            } /*else {
+                qDebug() << "Wrong params vector";
+            }*/
+        }
+    }
+    return paramsVector;
+}
+
 void Server::emitAddElem(QStringList* params)
 {
     Id const parent = ValuesSerializer::deserializeId(params->at(2));
-    qDebug() << "parent" << params->at(2);
+//    qDebug() << "parent" << params->at(2);
     Id const id = ValuesSerializer::deserializeId(params->at(3));
-    qDebug() << "id" << params->at(3);
+//    qDebug() << "id" << params->at(3);
     Id const logicalId = ValuesSerializer::deserializeId(params->at(4));
-    qDebug() << "logicalId" << params->at(4);
+//    qDebug() << "logicalId" << params->at(4);
     QString const name = params->at(5);
-    qDebug() << "name" << params->at(5);
+//    qDebug() << "name" << params->at(5);
     QPointF position = ValuesSerializer::deserializeQPointF(params->at(6));
-    qDebug() << "parent" << params->at(6);
+//    qDebug() << "parent" << params->at(6);
     if(params->at(1) == "l") {
         emit logicalModelElementAdded(parent, id, logicalId, name, position);
     } else {
@@ -122,94 +220,3 @@ void Server::emitEdgeAdded(QStringList* params)
     Id associationId = ValuesSerializer::deserializeId(params->at(9));
     emit edgeAdded(diagram, name, labelText, labelType, lineType, beginType, endType, edgeId, associationId);
 }
-
-void Server::emitSignals(QStringList* params)
-{
-    if(params->at(0) == "setData")
-    {
-        emitSetData(params);
-    } else if (params->at(0) == "addElem")
-    {
-        if(params->at(1) == "l") {
-            mTmpStorage = params->at(4);
-        }
-        emitAddElem(params);
-
-    } else if (params->at(0) == "delProp")
-    {
-        emit propDeleted(params->at(1));
-
-    } else if (params->at(0) == "updProp")
-    {
-        emit propUpdated(ValuesSerializer::deserializeId(params->at(1)), params->at(2), params->at(3), params->at(4), params->at(5));
-
-    } else if (params->at(0) == "updShape")
-    {
-        qDebug() << "id" << params->at(1);
-        qDebug() << "graphics" << params->at(2);
-        emit shapeUpdated(ValuesSerializer::deserializeId(params->at(1)), params->at(2));
-
-    } else if (params->at(0) == "addNode")
-    {
-        emit nodeAdded(ValuesSerializer::deserializeId(params->at(1)), params->at(2), params->at(3) == "t", ValuesSerializer::deserializeId(params->at(4)));
-
-    } else if (params->at(0) == "addEdge")
-    {
-        emitEdgeAdded(params);
-
-    } else if (params->at(0) == "addProp")
-    {
-        emit propAdded(ValuesSerializer::deserializeId(params->at(1)), params->at(2));
-
-    } else if (params->at(0) == "delElem")
-    {
-        emit elementDeleted(ValuesSerializer::deserializeId(params->at(1)));
-
-    } else if (params->at(0) == "diagrCr")
-    {
-        emit diagramCreated(params->at(1), ValuesSerializer::deserializeId(params->at(2)), ValuesSerializer::deserializeId(params->at(3)),ValuesSerializer::deserializeId(params->at(4)),ValuesSerializer::deserializeId(params->at(5)));
-
-    } else if(params->at(0) == "elemLocked")
-    {
-        QString userName = params->at(1);
-        Id id = ValuesSerializer::deserializeId(params->at(2));
-        bool state = params->at(3) == "t";
-        emit elemStateChanged(userName, id, state);
-    }
-}
-
-std::vector<QStringList*> Server::divideMsg(QByteArray const &msg)
-{
-    QString const paramsString = QString::fromAscii(msg);
-    QStringList const splittedParams = paramsString.split('|');
-    std::vector<QStringList*> paramsVector;
-    unsigned int size = 0;
-    for(int i = 0; i < splittedParams.length() - 1; i++) {
-        if(splittedParams.at(i) == "setData"
-                || splittedParams.at(i) == "addElem"
-                || splittedParams.at(i) == "delProp"
-                || splittedParams.at(i) == "updProp"
-                || splittedParams.at(i) == "updShape"
-                || splittedParams.at(i) == "addNode"
-                || splittedParams.at(i) == "addEdge"
-                || splittedParams.at(i) == "addProp"
-                || splittedParams.at(i) == "diagrCr"
-                || splittedParams.at(i) == "delElem"
-                || splittedParams.at(i) == "elemLocked"
-               ) {
-           QStringList* list = new QStringList();
-           list->append(splittedParams.at(i));
-           paramsVector.push_back(list);
-       } else {
-            size = paramsVector.size() - 1;
-            if (size != -1) {
-                ((QStringList*)paramsVector[size])->append(splittedParams.at(i));
-            } else {
-                qDebug() << "Wrong params vector";
-            }
-        }
-    }
-    return paramsVector;
-}
-
-

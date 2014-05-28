@@ -727,7 +727,7 @@ void InterpreterEditorManager::deleteProperty(QString const &propDisplayedName)
                     QStringList params;
                     params << "delProp" << propDisplayedName;
                     emit metaModelChanged(params.join("|") + "|");
-                    qDebug() << params.join("|") + "|";
+//                    qDebug() << params.join("|") + "|";
 				}
 			}
 		}
@@ -823,7 +823,7 @@ QString InterpreterEditorManager::shape(Id const &id) const
 
 void InterpreterEditorManager::updateShape(Id const &id, QString const &graphics)
 {
-    qDebug() << "alive" ;
+//    qDebug() << "alive" ;
 	QPair<qrRepo::RepoApi*, Id> const repoAndMetaIdPair = repoAndMetaId(id);
 	if (repoAndMetaIdPair.second.element() == "MetaEntityNode") {
 		repoAndMetaIdPair.first->setProperty(repoAndMetaIdPair.second, "shape", graphics);
@@ -831,7 +831,7 @@ void InterpreterEditorManager::updateShape(Id const &id, QString const &graphics
         QStringList params;
         params << "updShape" << id.toString() << graphics;
         emit metaModelChanged(params.join("|") + "|");
-        qDebug() << "interp" << params.join("|") + "|";
+//        qDebug() << "interp" << params.join("|") + "|";
 	}
 }
 
@@ -1055,7 +1055,7 @@ QPair<Id, Id> InterpreterEditorManager::createEditorAndDiagram(QString const &na
     QStringList params;
     params << "diagrCr" << name << editor.toString() << diagram.toString() << nodeId.toString() <<containerLink.toString();
     emit metaModelChanged(params.join("|") + "|");
-    qDebug() << params.join("|") + "|";
+//    qDebug() << params.join("|") + "|";
     return qMakePair(Id(repo->name(editor)), Id(repo->name(editor), repo->name(diagram)));
 }
 

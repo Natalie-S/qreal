@@ -283,7 +283,7 @@ void MainWindow::setConnection(int role)
 void MainWindow::connectAsServer()
 {
     connect(mModels->getServer(), SIGNAL(elemStateChanged(QString,Id,bool)), LockManager::getInstance(), SLOT(onElemStateChanged(QString,Id,bool)));
-    qDebug() << "Attention! minwindow connectAsSrv";
+//    qDebug() << "Attention! minwindow connectAsSrv";
     connect(mModels->getServer(), SIGNAL(logicalModelChanged(Id,QVariant,int)), mModels->getLogicalModel(), SLOT(justSetData(Id,QVariant,int)));
     connect(mModels->getServer(), SIGNAL(logicalModelElementAdded(Id,Id,Id,QString,QPointF)), mModels->getLogicalModel(), SLOT(justAddElementToModel(Id,Id,Id,QString,QPointF)));
 
@@ -291,6 +291,10 @@ void MainWindow::connectAsServer()
     connect(mModels->getServer(), SIGNAL(graphicalModelElementAdded(Id,Id,Id,QString,QPointF)), this, SLOT(graphicalAddElement(Id,Id,Id,QString,QPointF)));
 
     connect(mModels->getServer(), SIGNAL(diagramCreated(QString,Id,Id,Id,Id)), mStartWidget, SLOT(createDiagramFromClient(QString,Id,Id,Id,Id)));
+
+    connect(mModels->getServer(), SIGNAL(graphElemRemoved(Id)), &mModels->graphicalModelAssistApi(), SLOT(removeElement(Id)));
+    connect(mModels->getServer(), SIGNAL(logElemRemoved(Id)), &mModels->logicalModelAssistApi(), SLOT(removeElement(Id)));
+
     EditorManagerInterface *emi = &(this->editorManager());
     connect(mModels->getServer(), SIGNAL(propDeleted(QString)), emi, SLOT(deleteProperty(QString)));
     connect(mModels->getServer(), SIGNAL(propUpdated(Id,QString,QString,QString,QString)), emi, SLOT(updateProperties(Id,QString,QString,QString,QString)));
@@ -310,8 +314,11 @@ void MainWindow::graphicalAddElement(const Id &parent, const Id &id
 
 void MainWindow::connectAsClient()
 {
-    qDebug() << "Attention! connectAsClient";
+//    qDebug() << "Attention! connectAsClient";
     connect(LockManager::getInstance(), SIGNAL(setElementNewState(QString,Id,bool)), mModels->getClient(), SLOT(onElementBlocked(QString,Id,bool)));
+
+    connect(&mModels->graphicalModelAssistApi(), SIGNAL(graphicalElemRemoved(QString)), mModels->getClient(), SLOT(onMetaModelChanged(QString)));
+    connect(&mModels->logicalModelAssistApi(), SIGNAL(logElemRemoved(QString)), mModels->getClient(), SLOT(onMetaModelChanged(QString)));
 
     connect(mModels->getLogicalModel(), SIGNAL(smthChanged(QString,QString,QVariant,int)), mModels->getClient(), SLOT(onDataChanged(QString,QString,QVariant,int)));
     connect(mModels->getLogicalModel(), SIGNAL(elementAdded(QString,QString,QString,QString,QString,QPointF)), mModels->getClient(), SLOT(onElementAdded(QString,QString,QString,QString,QString,QPointF)));
@@ -322,7 +329,6 @@ void MainWindow::connectAsClient()
     EditorManagerInterface *emi = &(this->editorManager());
     Q_ASSERT(emi != NULL);
     connect(emi, SIGNAL(metaModelChanged(QString)), mModels->getClient(), SLOT(onMetaModelChanged(QString)));
-//    connect(mStartWidget, SIGNAL(diagramCreated(QString)), mModels->getClient(), SLOT(onDiagramCreated(QString)));
 }
 
 void MainWindow::addNodeFromClient(Id const &diagram, QString const &name, bool isRootDiagramNode, Id const &nodeId)

@@ -1,5 +1,7 @@
 #pragma once
 
+#include <QtCore/QObject>
+
 #include <qrkernel/ids.h>
 
 #include "models/details/logicalModel.h"
@@ -15,8 +17,10 @@ class EditorManagerInterface;
 
 namespace models {
 
-class LogicalModelAssistApi : public qReal::LogicalModelAssistInterface
+class LogicalModelAssistApi : public QObject, public qReal::LogicalModelAssistInterface
 {
+    Q_OBJECT
+
 public:
 	LogicalModelAssistApi(details::LogicalModel &logicalModel, EditorManagerInterface const &editorManagerInterface);
 	virtual ~LogicalModelAssistApi();
@@ -66,7 +70,10 @@ public:
 	virtual int childrenOfRootDiagram() const;
 	virtual int childrenOfDiagram(const Id &parent) const;
 
+public slots:
 	virtual void removeElement(Id const &logicalId);
+signals:
+    void logElemRemoved(QString const &buf);
 
 private:
 	LogicalModelAssistApi(LogicalModelAssistApi const &);  // Copying is forbidden

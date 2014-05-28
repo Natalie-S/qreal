@@ -311,6 +311,8 @@ private:
 	QTimer mRenderTimer;
 
     bool mIsSelected = false;
+    Qt::GlobalColor mBoxColor = Qt::transparent;
+
 };
 
 }

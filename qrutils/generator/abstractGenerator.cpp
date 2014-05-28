@@ -43,7 +43,7 @@ bool AbstractGenerator::loadTemplateFromFile(QString const &templateFileName, QS
 	}
 
 	QString const fileName = dir.absoluteFilePath(templateFileName);
-	qDebug() << fileName;
+//	qDebug() << fileName;
 	QFile file(fileName);
 	if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
 		qDebug() << "cannot load file \"" << fileName << "\"";

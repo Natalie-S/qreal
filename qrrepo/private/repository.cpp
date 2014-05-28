@@ -447,7 +447,7 @@ void Repository::saveDiagramsById(QHash<QString, IdList> const &diagramIds)
 void Repository::remove(IdList list) const
 {
 	foreach(Id const &id, list) {
-		qDebug() << id.toString();
+//		qDebug() << id.toString();
 		mSerializer.removeFromDisk(id);
 	}
 }
@@ -480,16 +480,17 @@ QString Repository::workingFile() const
 
 void Repository::printDebug() const
 {
-	qDebug() << mObjects.size() << " objects in repository";
-	foreach (Object *object, mObjects.values()) {
-		qDebug() << object->id().toString();
-		qDebug() << "Children:";
-		foreach (Id id, object->children())
-			qDebug() << id.toString();
-		qDebug() << "Parent:";
-		qDebug() << object->parent().toString();
-		qDebug() << "============";
-	}
+    qDebug() << "printDebug";
+//	qDebug() << mObjects.size() << " objects in repository";
+//	foreach (Object *object, mObjects.values()) {
+//		qDebug() << object->id().toString();
+//		qDebug() << "Children:";
+//		foreach (Id id, object->children())
+//			qDebug() << id.toString();
+//		qDebug() << "Parent:";
+//		qDebug() << object->parent().toString();
+//		qDebug() << "============";
+//	}
 }
 
 void Repository::exterminate()

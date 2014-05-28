@@ -244,12 +244,15 @@ int GraphicalModelAssistApi::childrenOfDiagram(const Id &parent) const
 	return mModelsAssistApi.childrenOfDiagram(parent);
 }
 
-void GraphicalModelAssistApi::removeElement(Id const &graphicalId)
-{
+void GraphicalModelAssistApi::removeElement(const Id &graphicalId)
+{    
 	QPersistentModelIndex const index = indexById(graphicalId);
 	if (graphicalRepoApi().exist(graphicalId) && index.isValid()) {
 		mGraphicalModel.removeRow(index.row(), index.parent());
 	}
+
+    QString buf = "grElemRemoved|" + graphicalId.toString() + "|";
+    emit graphicalElemRemoved(buf);
 }
 
 bool GraphicalModelAssistApi::hasLabel(Id const &graphicalId, int index)

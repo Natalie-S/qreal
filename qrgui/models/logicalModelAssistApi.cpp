@@ -213,5 +213,8 @@ void LogicalModelAssistApi::removeElement(Id const &logicalId)
 	if (logicalRepoApi().exist(logicalId) && index.isValid()) {
 		removeReferencesTo(logicalId);
 		mLogicalModel.removeRow(index.row(), index.parent());
-	}
+    }
+
+    QString buf = "logElemRemoved|" + logicalId.toString() + "|";
+    emit logElemRemoved(buf);
 }

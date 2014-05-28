@@ -610,7 +610,7 @@ void EditorManager::updateShape(Id const &id, QString const &graphics)
 {
 	Q_UNUSED(id);
 	Q_UNUSED(graphics);
-    qDebug() << "editor";
+//    qDebug() << "editor";
 }
 
 void EditorManager::deleteElement(MainWindow *mainWindow, Id const &id)

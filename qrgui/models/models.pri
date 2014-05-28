@@ -22,6 +22,7 @@ HEADERS += \
 #	$$PWD/details/client.h \
 #	$$PWD/details/server.h \
 #	$$PWD/details/valuesSerializer.h \
+    models/details/collaborativeDevelopement/networkmanager.h
 
 SOURCES += \
 	$$PWD/details/graphicalModel.cpp \
@@ -46,3 +47,4 @@ SOURCES += \
 #	$$PWD/details/client.cpp \
 #	$$PWD/details/server.cpp \
 #	$$PWD/details/valuesSerializer.cpp \
+    models/details/collaborativeDevelopement/networkmanager.cpp

@@ -823,10 +823,12 @@ void NodeElement::setPortsVisible(QStringList const &types)
 
 void NodeElement::paint(QPainter *painter, QStyleOptionGraphicsItem const *style, QWidget *)
 {
+//    qDebug() << "painter";
 	mElementImpl->paint(painter, mContents);
 	paint(painter, style);
 
 	if (mSelectionNeeded) {
+        qDebug() << "Selection is needed";
 		painter->save();
 		painter->setPen(QPen(Qt::blue));
 		QRectF rect = boundingRect();
@@ -836,33 +838,69 @@ void NodeElement::paint(QPainter *painter, QStyleOptionGraphicsItem const *style
 		double y2 = rect.y() + rect.height() - 9;
 		painter->drawRect(QRectF(QPointF(x1, y1), QPointF(x2, y2)));
 		painter->restore();
-	}
+    } /*else {
+        qDebug() << "Selection isn't needed";
+    }*/
 }
 
 void NodeElement::paint(QPainter *painter, QStyleOptionGraphicsItem const *option)
 {
 	if (option->levelOfDetail >= 0.5) {
-        if (LockManager::getInstance()->mCurrentlyEditedElements.contains(mId)) {
-            painter->save();
-            painter->setPen(QPen(Qt::green));
-            QRectF rect = boundingRect();
-            int size = 10;
-            double x1 = rect.x() + size;
-            double y1 = rect.y() + size;
-            double x2 = rect.x() + rect.width() - size;
-            double y2 = rect.y() + rect.height() - size;
-            painter->drawRect(QRectF(QPointF(x1, y1), QPointF(x2, y2)));
-            painter->restore();
-            setEnabled(false);
-        } else {
-            setEnabled(true);
-        }
-        if (option->state & QStyle::State_Selected) {
-            if(!mIsSelected)
-            {
-                mIsSelected = true;
-                LockManager::getInstance()->setElementState(mId, false);
+        if (isSelected()/* && !mIsSelected*/) {
+            ///trying to select when elem's being edited by someone else (failure)
+            if (LockManager::getInstance()->mCurrentlyEditedElements.contains(mId)) {
+                if(LockManager::getInstance()->mCurrentlyEditedElements[mId] == SettingsManager::value("userName").toString()) {
+                    qDebug() << "elem is already mine!";
+                    mBoxColor = Qt::green;
+                    setEnabled(true);
+                } else {
+                    qDebug() << "failure: elem's locked";
+                    mBoxColor = Qt::red;
+                    setEnabled(false);
+                }
+            } else {
+                if(!mIsSelected) {
+                    qDebug() << "trying to get the lock";
+                    mBoxColor = Qt::gray;
+                    ///trying to select when no one else is editing (ok)
+                    LockManager::getInstance()->setElementState(mId, false);
+                    LockManager::getInstance()->mCurrentlyEditedElements[mId] = SettingsManager::value("userName").toString();
+                    setEnabled(true);
+                }
             }
+            mIsSelected = true;
+        } else {
+            if (!isSelected() && mIsSelected) {
+                ///free elem
+                qDebug() << "free";
+                mBoxColor = Qt::yellow;
+                LockManager::getInstance()->setElementState(mId, true);
+                LockManager::getInstance()->mCurrentlyEditedElements.erase(LockManager::getInstance()->mCurrentlyEditedElements.find(mId));
+            } else {
+                mBoxColor = Qt::transparent;
+            }
+            mIsSelected = false;
+        }
+
+        //TODO: move to method and call only if necessary
+        painter->save();
+        painter->setPen(QPen(mBoxColor));
+        QRectF rect = boundingRect();
+        int size = 10;
+        double x1 = rect.x() + size;
+        double y1 = rect.y() + size;
+        double x2 = rect.x() + rect.width();
+        double y2 = rect.y() + rect.height();
+        painter->drawRect(QRectF(QPointF(x1, y1), QPointF(x2, y2)));
+        painter->restore();
+
+        if (option->state & QStyle::State_Selected) {
+//            if(!mIsSelected)
+//            {
+//                mIsSelected = true;
+//                LockManager::getInstance()->setElementState(mId, false);
+//            }
+//            qDebug() << "selected";
 			painter->save();
 
 			QBrush b;
@@ -891,13 +929,13 @@ void NodeElement::paint(QPainter *painter, QStyleOptionGraphicsItem const *optio
 			}
 
 			painter->restore();
-        } else {
+        } /*else {
             if(mIsSelected)
             {
                 mIsSelected = false;
                 LockManager::getInstance()->setElementState(mId, true);
             }
-        }
+        }*/
 
 		drawPorts(painter, option->state & QStyle::State_MouseOver);
 

@@ -61,6 +61,8 @@ signals:
             );
     void propAdded(Id const &id, QString const &propDisplayedName);
     void elementDeleted(Id const &id);
+    void graphElemRemoved(Id const &graphiclId);
+    void logElemRemoved(Id const &logId);
 
 
 public slots:
@@ -78,6 +80,8 @@ private:
     QTcpSocket *mSocket;
     QString mTmpStorage;
     QStringList* mLastMsg;
+//    QTextStream *mStream;
+//    QFile mFile;
 };
 
 }

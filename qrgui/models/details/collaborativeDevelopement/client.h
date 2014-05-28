@@ -34,11 +34,11 @@ class Client : public QObject
         void onDataChanged(QString modelIdentifier, QString id, const QVariant &value, int role);
         void onElementAdded(const QString &modelIdentifier, const QString &parent, const QString &id, const QString &logicalId, QString const &name
                                      , QPointF const &position);
-        void onDiagramCreated(QString const &name);
     private:
         QTcpSocket *mSocket;
         void sendMsg(QString buf);
         QTextStream *mOutStream;
+        QFile *mLogFile;
 };
 
 }
