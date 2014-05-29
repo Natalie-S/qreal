@@ -211,7 +211,6 @@ private slots:
     void deleteElementFromClient(Id const &id);
     void setConnection(int role);
     void connectAsClient();
-    void connectAsServer();
     void changeRoleInWindowTitle();
     void graphicalAddElement(const Id &parent, const Id &id
                                          , const Id &logicalId, QString const &name, const QPointF &position);
@@ -298,7 +297,6 @@ private slots:
     void openShapeEditor();
 
     void updatePaletteIcons();
-    void qq(int exRole, QString addr);
     void setTextChanged(bool changed);
 
     void setUsabilityMode(bool mode);

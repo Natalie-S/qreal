@@ -130,7 +130,7 @@ void GraphicalModel::addElementToModel(const Id &parent, const Id &id
 //    qDebug() << "actualLogId  " << actualLogicalId.toString();
 
     initializeElement(id, actualLogicalId, parentItem, newGraphicalModelItem, name, position);
-    emit elementAdded("addElem|g|", parent.toString(), id.toString(), logicalId.toString(), name, position);
+    emit elementAdded("addElem|g", parent.toString(), id.toString(), logicalId.toString(), name, position);
 }
 
 void GraphicalModel::initializeElement(const Id &id, const Id &logicalId
@@ -192,52 +192,58 @@ QVariant GraphicalModel::data(const QModelIndex &index, int role) const
 	}
 }
 
+bool GraphicalModel::setValue(const QModelIndex &index, const QVariant &value, int role, bool sendToSever)
+{
+    if (index.isValid()) {
+        AbstractModelItem *item = static_cast<AbstractModelItem *>(index.internalPointer());
+        switch (role) {
+        case Qt::DisplayRole:
+        case Qt::EditRole:
+            setNewName(item->id(), value.toString());
+            break;
+        case roles::positionRole:
+            mApi.setPosition(item->id(), value);
+            break;
+        case roles::configurationRole:
+            mApi.setConfiguration(item->id(), value);
+            break;
+        case roles::fromRole:
+            mApi.setFrom(item->id(), value.value<Id>());
+            break;
+        case roles::toRole:
+            mApi.setTo(item->id(), value.value<Id>());
+            break;
+        case roles::fromPortRole:
+            mApi.setFromPort(item->id(), value.toDouble());
+            break;
+        case roles::toPortRole:
+            mApi.setToPort(item->id(), value.toDouble());
+            break;
+        default:
+            if (role >= roles::customPropertiesBeginRole) {
+                QString selectedProperty = findPropertyName(item->id(), role);
+                mApi.setProperty(item->id(), selectedProperty, value);
+                break;
+            }
+            Q_ASSERT(role < Qt::UserRole);
+        }
+        emit dataChanged(index, index);
+        if(sendToSever) {
+            emit smthChanged("setData|g", item->id().toString(), value, role);
+        }
+        return true;
+    }
+    return false;
+}
+
 bool GraphicalModel::justSetData(const Id &id, const QVariant &value, int role)
 {
-    return setData(indexById(id), value, role);
+    return setValue(indexById(id), value, role, false);
 }
 
 bool GraphicalModel::setData(const QModelIndex &index, const QVariant &value, int role)
 {
-	if (index.isValid()) {
-		AbstractModelItem *item = static_cast<AbstractModelItem *>(index.internalPointer());
-		switch (role) {
-		case Qt::DisplayRole:
-		case Qt::EditRole:
-			setNewName(item->id(), value.toString());
-			break;
-		case roles::positionRole:
-			mApi.setPosition(item->id(), value);
-			break;
-		case roles::configurationRole:
-			mApi.setConfiguration(item->id(), value);
-			break;
-		case roles::fromRole:
-			mApi.setFrom(item->id(), value.value<Id>());
-			break;
-		case roles::toRole:
-			mApi.setTo(item->id(), value.value<Id>());
-			break;
-		case roles::fromPortRole:
-			mApi.setFromPort(item->id(), value.toDouble());
-			break;
-		case roles::toPortRole:
-			mApi.setToPort(item->id(), value.toDouble());
-			break;
-		default:
-			if (role >= roles::customPropertiesBeginRole) {
-				QString selectedProperty = findPropertyName(item->id(), role);
-				mApi.setProperty(item->id(), selectedProperty, value);
-				break;
-			}
-			Q_ASSERT(role < Qt::UserRole);
-			return false;
-		}
-		emit dataChanged(index, index);
-        emit smthChanged("setData|g|", item->id().toString(), value, role);
-		return true;
-	}
-	return false;
+    return setValue(index, value, role, true);
 }
 
 void GraphicalModel::setNewName(Id const &id, QString const newValue)

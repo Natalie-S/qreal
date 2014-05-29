@@ -188,7 +188,7 @@ void LogicalModel::addElementToModel(const Id &parent, const Id &id, const Id &l
     } else {
         newItem = createModelItem(id, parentItem);
         initializeElement(id, parentItem, newItem, name, position);
-        emit elementAdded("addElem|l|", parent.toString(), id.toString(), logicalId.toString(), name, position);
+        emit elementAdded("addElem|l", parent.toString(), id.toString(), logicalId.toString(), name, position);
     }
 }
 
@@ -269,7 +269,7 @@ bool LogicalModel::setData(const QModelIndex &index, const QVariant &value, int 
             return false;
         }
         emit dataChanged(index, index);
-        emit smthChanged("setData|l|", item->id().toString(), value, role);
+        emit smthChanged("setData|l", item->id().toString(), value, role);
         return true;
     }
     return false;

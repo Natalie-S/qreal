@@ -267,42 +267,11 @@ void MainWindow::connectActions()
 
 void MainWindow::setConnection(int role)
 {
-    switch(role)
-    {
-    case 1:
+    if (role == 1) {
         connect (mModels->getClient(), SIGNAL(connectedToServer()), this, SLOT(connectAsClient()));
-        break;
-    case 2:
-        connect (mModels->getServer(), SIGNAL(connectedToClient()), this, SLOT(connectAsServer()));
-        break;
-    default:
-        break;
-    }
-}
-
-void MainWindow::connectAsServer()
-{
-    connect(mModels->getServer(), SIGNAL(elemStateChanged(QString,Id,bool)), LockManager::getInstance(), SLOT(onElemStateChanged(QString,Id,bool)));
-//    qDebug() << "Attention! minwindow connectAsSrv";
-    connect(mModels->getServer(), SIGNAL(logicalModelChanged(Id,QVariant,int)), mModels->getLogicalModel(), SLOT(justSetData(Id,QVariant,int)));
-    connect(mModels->getServer(), SIGNAL(logicalModelElementAdded(Id,Id,Id,QString,QPointF)), mModels->getLogicalModel(), SLOT(justAddElementToModel(Id,Id,Id,QString,QPointF)));
-
-    connect(mModels->getServer(), SIGNAL(graphicalModelChanged(Id,QVariant,int)), mModels->getGraphicalModel(), SLOT(justSetData(Id,QVariant,int)));
-    connect(mModels->getServer(), SIGNAL(graphicalModelElementAdded(Id,Id,Id,QString,QPointF)), this, SLOT(graphicalAddElement(Id,Id,Id,QString,QPointF)));
-
-    connect(mModels->getServer(), SIGNAL(diagramCreated(QString,Id,Id,Id,Id)), mStartWidget, SLOT(createDiagramFromClient(QString,Id,Id,Id,Id)));
-
-    connect(mModels->getServer(), SIGNAL(graphElemRemoved(Id)), &mModels->graphicalModelAssistApi(), SLOT(removeElement(Id)));
-    connect(mModels->getServer(), SIGNAL(logElemRemoved(Id)), &mModels->logicalModelAssistApi(), SLOT(removeElement(Id)));
-
-    EditorManagerInterface *emi = &(this->editorManager());
-    connect(mModels->getServer(), SIGNAL(propDeleted(QString)), emi, SLOT(deleteProperty(QString)));
-    connect(mModels->getServer(), SIGNAL(propUpdated(Id,QString,QString,QString,QString)), emi, SLOT(updateProperties(Id,QString,QString,QString,QString)));
-    connect(mModels->getServer(), SIGNAL(shapeUpdated(Id,QString)), emi, SLOT(updateShape(Id,QString)));
-    connect(mModels->getServer(), SIGNAL(nodeAdded(Id,QString,bool,Id)), this, SLOT(addNodeFromClient(Id,QString,bool,Id)));
-    connect(mModels->getServer(), SIGNAL(edgeAdded(Id,QString,QString,QString,QString,QString,QString,Id,Id)), this, SLOT(addEdgeFromClient(Id,QString,QString,QString,QString,QString,QString,Id,Id)));
-    connect(mModels->getServer(), SIGNAL(elementDeleted(Id)), this, SLOT(deleteElementFromClient(Id)));
-    connect(mModels->getServer(), SIGNAL(propAdded(Id,QString)), emi, SLOT(addProperty(Id,QString)));
+    } else if (role == 0) {
+        qDebug() << "Still forever alone";
+    } else { qDebug() << "False role!"; }
 }
 
 void MainWindow::graphicalAddElement(const Id &parent, const Id &id
@@ -314,7 +283,7 @@ void MainWindow::graphicalAddElement(const Id &parent, const Id &id
 
 void MainWindow::connectAsClient()
 {
-//    qDebug() << "Attention! connectAsClient";
+    ///Sending messages
     connect(LockManager::getInstance(), SIGNAL(setElementNewState(QString,Id,bool)), mModels->getClient(), SLOT(onElementBlocked(QString,Id,bool)));
 
     connect(&mModels->graphicalModelAssistApi(), SIGNAL(graphicalElemRemoved(QString)), mModels->getClient(), SLOT(onMetaModelChanged(QString)));
@@ -329,6 +298,31 @@ void MainWindow::connectAsClient()
     EditorManagerInterface *emi = &(this->editorManager());
     Q_ASSERT(emi != NULL);
     connect(emi, SIGNAL(metaModelChanged(QString)), mModels->getClient(), SLOT(onMetaModelChanged(QString)));
+
+    ///Receiving messages
+    connect(mModels->getClient(), SIGNAL(elemStateChanged(QString,Id,bool)), LockManager::getInstance(), SLOT(onElemStateChanged(QString,Id,bool)));
+    connect(mModels->getClient(), SIGNAL(logicalModelChanged(Id,QVariant,int)), mModels->getLogicalModel(), SLOT(justSetData(Id,QVariant,int)));
+    connect(mModels->getClient(), SIGNAL(logicalModelElementAdded(Id,Id,Id,QString,QPointF)), mModels->getLogicalModel(), SLOT(justAddElementToModel(Id,Id,Id,QString,QPointF)));
+
+    connect(mModels->getClient(), SIGNAL(graphicalModelChanged(Id,QVariant,int)), mModels->getGraphicalModel(), SLOT(justSetData(Id,QVariant,int)));
+    connect(mModels->getClient(), SIGNAL(graphicalModelElementAdded(Id,Id,Id,QString,QPointF)), this, SLOT(graphicalAddElement(Id,Id,Id,QString,QPointF)));
+
+    connect(mModels->getClient(), SIGNAL(diagramCreated(QString,Id,Id,Id,Id)), mStartWidget, SLOT(createDiagramFromClient(QString,Id,Id,Id,Id)));
+
+    connect(mModels->getClient(), SIGNAL(graphElemRemoved(Id)), &mModels->graphicalModelAssistApi(), SLOT(removeElement(Id)));
+    connect(mModels->getClient(), SIGNAL(logElemRemoved(Id)), &mModels->logicalModelAssistApi(), SLOT(removeElement(Id)));
+
+    connect(mModels->getClient(), SIGNAL(propDeleted(QString)), emi, SLOT(deleteProperty(QString)));
+    connect(mModels->getClient(), SIGNAL(propUpdated(Id,QString,QString,QString,QString)), emi, SLOT(updateProperties(Id,QString,QString,QString,QString)));
+    connect(mModels->getClient(), SIGNAL(shapeUpdated(Id,QString)), emi, SLOT(updateShape(Id,QString)));
+    connect(mModels->getClient(), SIGNAL(nodeAdded(Id,QString,bool,Id)), this, SLOT(addNodeFromClient(Id,QString,bool,Id)));
+    connect(mModels->getClient(), SIGNAL(edgeAdded(Id,QString,QString,QString,QString,QString,QString,Id,Id)), this, SLOT(addEdgeFromClient(Id,QString,QString,QString,QString,QString,QString,Id,Id)));
+    connect(mModels->getClient(), SIGNAL(elementDeleted(Id)), this, SLOT(deleteElementFromClient(Id)));
+    connect(mModels->getClient(), SIGNAL(propAdded(Id,QString)), emi, SLOT(addProperty(Id,QString)));
+
+//    connect(this, SIGNAL(newChatMsg(QString)), mModels->getClient(), SLOT(onMetaModelChanged(QString)));
+//    connect(mModels->getClient(), SIGNAL(receivedChatMsg(QString,QString)), this, SLOT(onChatMsgReceived(QString,QString)));
+//    mUi->chatHistory->append("<System: user " + SettingsManager::value("userName").toString() + " opened the diagram>");
 }
 
 void MainWindow::addNodeFromClient(Id const &diagram, QString const &name, bool isRootDiagramNode, Id const &nodeId)
@@ -827,10 +821,7 @@ QString MainWindow::currentRole()
         role = "Stand alone machine";
         break;
     case 1:
-        role = "Client machine";
-        break;
-    case 2:
-        role = "Server machine";
+        role = "Collaborative development mode on";
         break;
     }
     return role;
@@ -1142,15 +1133,10 @@ void MainWindow::showPreferencesDialog()
         connect(&mPreferencesDialog, SIGNAL(fontChanged()), this, SLOT(setSceneFont()));
     }
     connect(&mPreferencesDialog, SIGNAL(usabilityTestingModeChanged(bool)), this, SLOT(setUsabilityMode(bool)));
-    connect(&mPreferencesDialog, SIGNAL(newRole(int, QString)), this, SLOT(qq(int, QString)));
+    connect(&mPreferencesDialog, SIGNAL(newRole(int, QString)), mModels, SLOT(roleChanged(int,QString)));
     mPreferencesDialog.exec();
     mToolManager.updateSettings();
     mProjectManager->reinitAutosaver();
-}
-
-void MainWindow::qq(int exRole, QString addr)
-{
-    mModels->roleChanged(exRole, addr);
 }
 
 void MainWindow::initSettingsManager()
@@ -2041,7 +2027,7 @@ void MainWindow::initPluginsAndStartWidget()
     {
         openStartTab();
     }
-    qq(0, SettingsManager::value("lastServerAddress").toString());
+    mModels->roleChanged(0, SettingsManager::value("lastServerAddress").toString());
 }
 
 void MainWindow::addActionOrSubmenu(QMenu *target, ActionInfo const &actionOrMenu)

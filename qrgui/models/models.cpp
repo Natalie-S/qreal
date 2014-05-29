@@ -22,21 +22,11 @@ Models::Models(QString const &workingCopy, EditorManagerInterface &editorManager
 
     mLogicalModel->connectToGraphicalModel(mGraphicalModel);
     mGraphicalModel->connectToLogicalModel(mLogicalModel);
-
-//    qDebug() << "init role" << SettingsManager::value("role").toInt();
-//    qDebug() << "init addr" << SettingsManager::value("lastServerAddress").toString();
-//    roleChanged(0, SettingsManager::value("lastServerAddress").toString());
-
 }
 
 models::details::collaborativeDevelopment::Client *Models::getClient()
 {
     return mClient;
-}
-
-models::details::collaborativeDevelopment::Server *Models::getServer()
-{
-    return mServer;
 }
 
 models::details::GraphicalModel *Models::getGraphicalModel()
@@ -58,42 +48,14 @@ Models::~Models()
 
 void Models::roleChanged(int exRole, QString addr)
 {
-    switch(exRole) {
-    case 1:
-    {
-        QObject::disconnect(mClient, 0, 0, 0);
-        mClient->disconnectFromServer();
-    }
-        break;
-    case 2:
-    {
-        QObject::disconnect(mServer, 0, 0, 0);
-        mServer->close();
-    }
-        break;
-    default:
-        break;
-    }
     int role = SettingsManager::value("role").toInt();
-//    qDebug() << "in roleC" << role;
-    switch(role) {
-    case 0:
+    if (exRole == 1 && role == 0) {
+        mClient->onDisconnected();
+    }
+    if (role == 0) {
         qDebug() << "Forever alone";
-        break;
-    case 1:
-    {
+    } else if (role == 1) {
         makeItClient(addr);
-        emit roleWasSet(1);
-    }
-        break;
-    case 2:
-    {
-        makeItServer();
-        emit roleWasSet(2);
-    }
-        break;
-    default:
-        break;
     }
 }
 
@@ -102,13 +64,7 @@ void Models::makeItClient(QString addr)
     qDebug() << "I'm a client!";
     mClient = new models::details::collaborativeDevelopment::Client();
     mClient->connectToServer(addr);
-}
-
-void Models::makeItServer()
-{
-    qDebug() << "I'm a server!";
-    mServer = new models::details::collaborativeDevelopment::Server();
-    mServer->listen();
+    emit roleWasSet(1);
 }
 
 QAbstractItemModel* Models::graphicalModel() const

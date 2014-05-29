@@ -77,6 +77,7 @@ private:
 			, modelsImplementation::AbstractModelItem *item, QString const &name, const QPointF &position);
 	virtual void removeModelItemFromApi(details::modelsImplementation::AbstractModelItem *const root
 			, details::modelsImplementation::AbstractModelItem *child);
+    bool setValue(const QModelIndex &index, const QVariant &value, int role, bool sendToSever);
 };
 }
 }

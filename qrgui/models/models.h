@@ -5,7 +5,6 @@
 #include "models/graphicalModelAssistApi.h"
 #include "models/logicalModelAssistApi.h"
 #include "models/details/collaborativeDevelopement/client.h"
-#include "models/details/collaborativeDevelopement/server.h"
 
 using namespace qReal;
 using namespace models;
@@ -36,9 +35,7 @@ public:
 
     void reinit();
     void makeItClient(QString addr);
-    void makeItServer();
     models::details::collaborativeDevelopment::Client *getClient();
-    models::details::collaborativeDevelopment::Server *getServer();
     models::details::GraphicalModel *getGraphicalModel();
     models::details::LogicalModel *getLogicalModel();
 signals:
@@ -46,8 +43,6 @@ signals:
 
 public slots:
     void roleChanged(int exRole, QString addr);
-//    void onElementAdded(Id const &parent, Id const &id,Id const &logicalId, QString const &name
-//                        , QPointF const &position);
 
 private:
     models::details::GraphicalModel *mGraphicalModel;
@@ -55,7 +50,6 @@ private:
     models::details::LogicalModel *mLogicalModel;
     qrRepo::RepoControlInterface *mRepoApi;
     models::details::collaborativeDevelopment::Client *mClient = NULL;
-    models::details::collaborativeDevelopment::Server *mServer = NULL;
 };
 
 }

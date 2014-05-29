@@ -18,15 +18,13 @@ PreferencesMiscellaniousPage::PreferencesMiscellaniousPage(QWidget *parent)
     mUi->colorComboBox->addItems(QColor::colorNames());
 
     mExRole = SettingsManager::value("role").toInt();
-    if(mExRole != 1) {
+    if (mExRole != 1) {
         mUi->ipAddressEdit->setDisabled(1);
     } else {
         mUi->ipAddressEdit->setText(SettingsManager::value("lastServerAddress").toString());
     }
     connect(mUi->clientRole, SIGNAL(clicked()), this, SLOT(enableIpAddressEdit()));
-    connect(mUi->serverRole, SIGNAL(clicked()), this, SLOT(disableIpAddressEdit()));
     connect(mUi->standAloneRole, SIGNAL(clicked()), this, SLOT(disableIpAddressEdit()));
-    //SettingsManager::setValue("role", 0);
     restoreSettings();
 }
 
@@ -58,9 +56,8 @@ void PreferencesMiscellaniousPage::enableIpAddressEdit()
 {
 
     QString addr = SettingsManager::value("lastServerAddress").toString();
-    //qDebug() << "enable " << addr;
     mUi->ipAddressEdit->setEnabled(1);
-    if(addr != "") {
+    if (addr != "") {
         mUi->ipAddressEdit->setText(addr);
     }
 
@@ -68,7 +65,7 @@ void PreferencesMiscellaniousPage::enableIpAddressEdit()
 
 void PreferencesMiscellaniousPage::disableIpAddressEdit()
 {
-    if(mUi->ipAddressEdit->isEnabled()) {
+    if (mUi->ipAddressEdit->isEnabled()) {
         mUi->ipAddressEdit->clear();
         mUi->ipAddressEdit->setDisabled(1);
     }
@@ -87,24 +84,21 @@ void PreferencesMiscellaniousPage::save()
 
     int curRole = mExRole;
     QString addr = "";
-    if(mUi->clientRole->isChecked()) {
+    if (mUi->clientRole->isChecked()) {
         curRole = 1;
         addr = mUi->ipAddressEdit->text();
-    }
-    else if (mUi->serverRole->isChecked()) {
-        curRole = 2;
-    }
-    else if(mUi->standAloneRole->isChecked()) {
+    } else if (mUi->standAloneRole->isChecked()) {
         curRole = 0;
     }
-    if(curRole != mExRole) {
+    if (curRole != mExRole) {
         SettingsManager::setValue("role",  curRole);
         if (curRole == 1) {
             SettingsManager::setValue("lastServerAddress", addr);
         }
-//        qDebug << "miscel role changed";
         emit newRole(mExRole, addr);
         mExRole = curRole;
+    } else if (curRole == 1 && SettingsManager::value("lastServerAddress").toString() != addr) {
+        emit newRole(mExRole, addr);
     }
 
     if (mLastIconsetPath != mUi->imagesPathEdit->text()) {
@@ -135,9 +129,6 @@ void PreferencesMiscellaniousPage::restoreSettings()
         mUi->clientRole->setChecked(true);
         mUi->ipAddressEdit->setText(SettingsManager::value("lastServerAddress").toString());
     }
-        break;
-    case 2:
-        mUi->serverRole->setChecked(true);
         break;
     default:
         break;
