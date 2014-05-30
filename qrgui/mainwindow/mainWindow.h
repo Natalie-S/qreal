@@ -173,10 +173,12 @@ signals:
     void currentIdealGestureChanged();
     void rootDiagramChanged();
     void shapeUpdated(QString const &data, QPersistentModelIndex const &index, int const &role);
+    void newChatMsg(QString const &msg);
 
 
 
-public slots:    
+public slots:
+    void onChatMsgReceived(QString const &msg);
     void addNodeFromClient(Id const &diagram, QString const &name, bool isRootDiagramNode, Id const &nodeId);
     void addEdgeFromClient(Id const &diagram, QString const &name, QString const &labelText
                , QString const &labelType, QString const &lineType
@@ -302,6 +304,8 @@ private slots:
     void setUsabilityMode(bool mode);
     void startUsabilityTest();
     void finishUsabilityTest();
+
+    void on_chatMessage_returnPressed();
 
 private:
     QHash<EditorView*, QPair<gui::QScintillaTextEdit *, QPair<QPersistentModelIndex, int> > > *mOpenedTabsWithEditor;

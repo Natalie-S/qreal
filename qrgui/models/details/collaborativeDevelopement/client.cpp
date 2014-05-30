@@ -188,7 +188,7 @@ void Client::emitSignals(QStringList* params)
         emit logElemRemoved(ValuesSerializer::deserializeId(params->at(1)));
     } else if (params->at(0) == "chatMsg")
     {
-        emit receivedChatMsg(params->at(1), params->at(2));
+        emit receivedChatMsg(params->at(1));
     }
 }
 

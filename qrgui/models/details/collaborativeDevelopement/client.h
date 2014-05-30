@@ -70,7 +70,7 @@ class Client : public QObject
         void elementDeleted(Id const &id);
         void graphElemRemoved(Id const &graphiclId);
         void logElemRemoved(Id const &logId);
-        void receivedChatMsg(QString userName, QString msg);
+        void receivedChatMsg(QString const &msg);
 
     public slots:
         void onElementBlocked(QString const &userName, Id const &id, bool state);

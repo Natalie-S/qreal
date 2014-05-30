@@ -119,6 +119,8 @@ void PreferencesMiscellaniousPage::restoreSettings()
 
     mLastIconsetPath = SettingsManager::value("pathToImages").toString();
 
+    mUi->userName->setText(SettingsManager::value("userName").toString());
+
     int curRole = SettingsManager::value("role").toInt();
     switch (curRole) {
     case 0:

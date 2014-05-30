@@ -320,8 +320,8 @@ void MainWindow::connectAsClient()
     connect(mModels->getClient(), SIGNAL(elementDeleted(Id)), this, SLOT(deleteElementFromClient(Id)));
     connect(mModels->getClient(), SIGNAL(propAdded(Id,QString)), emi, SLOT(addProperty1(Id,QString)));
 
-//    connect(this, SIGNAL(newChatMsg(QString)), mModels->getClient(), SLOT(onMetaModelChanged(QString)));
-//    connect(mModels->getClient(), SIGNAL(receivedChatMsg(QString,QString)), this, SLOT(onChatMsgReceived(QString,QString)));
+    connect(this, SIGNAL(newChatMsg(QString)), mModels->getClient(), SLOT(onMetaModelChanged(QString)));
+    connect(mModels->getClient(), SIGNAL(receivedChatMsg(QString)), this, SLOT(onChatMsgReceived(QString)));
 //    mUi->chatHistory->append("<System: user " + SettingsManager::value("userName").toString() + " opened the diagram>");
 }
 
@@ -2350,4 +2350,17 @@ void MainWindow::openStartTab()
     int const index = mUi->tabs->addTab(mStartWidget, tr("Getting Started"));
     mUi->tabs->setTabUnclosable(index);
     mStartWidget->setVisibleForInterpreterButton(mToolManager.customizer()->showInterpeterButton());
+}
+
+void qReal::MainWindow::on_chatMessage_returnPressed()
+{
+    QString msg = mUi->chatMessage->text();
+    mUi->chatHistory->append("Me: " + msg);
+    mUi->chatMessage->clear();
+    emit newChatMsg("chatMsg|" + SettingsManager::value("userName").toString() + ": " + msg + "|");
+}
+
+void MainWindow::onChatMsgReceived(QString const &msg)
+{
+    mUi->chatHistory->append(msg);
 }

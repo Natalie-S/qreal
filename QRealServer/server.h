@@ -4,6 +4,7 @@
 #include <QtNetwork/QTcpServer>
 #include <QtNetwork/QTcpSocket>
 #include <QDebug>
+#include <QFile>
 #include <qglobal.h>
 #include <cstdio>
 
@@ -38,6 +39,9 @@ private:
     int mCounter = 0;
 	
 	SocketWrapper *findWrapperById(int id);
+
+    QFile* file;
+    QTextStream* outStream;
 	
     QMap<int, QString> mLocks;
 	//TODO перенести сюда блокировки
