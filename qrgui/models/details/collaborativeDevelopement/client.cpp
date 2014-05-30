@@ -40,20 +40,37 @@ void Client::onDisconnected() {
     mSocket->deleteLater();
 }
 
+quint16 Client::getFirsMessageSize() {
+    if(mBuffer.size() >= 2) {
+        return (mBuffer.at(0) - 1) * 127 + (mBuffer.at(1) - 1) + 2;
+    } else {
+        return 0;
+    }
+}
+
 void Client::onReadyRead()
 {
-    QByteArray msg = mSocket->readAll();
-    qDebug() << "Recieved message:" << msg;
-    processSocketMsg(msg);
+    mBuffer.append(mSocket->readAll());
+    quint16 firstMessageSize = getFirsMessageSize();
+    while (mBuffer.size() >= 2 && mBuffer.size() >= firstMessageSize) {
+        processSocketMsg((mBuffer.left(firstMessageSize)).remove(0, 2));
+        mBuffer = mBuffer.remove(0, firstMessageSize);
+        firstMessageSize = getFirsMessageSize();
+    }
+//    qDebug() << "Recieved message:" << msg;
+//    processSocketMsg(msg);
 }
 
 ///Creating and sending msgs
 void Client::sendMsg(QString buf)
 {
     qDebug() << "Sending message:" <<  buf;
-    QByteArray buffer;
-    buffer = buf.toAscii();
-    mSocket->write(buffer);
+    QByteArray localBuffer;
+    localBuffer.append((char)(1 + buf.size() / 127));
+    localBuffer.append((char)(1 + buf.size() % 127));
+    localBuffer.append(buf.toAscii());
+    qDebug() << "Message content:" <<  localBuffer;
+    mSocket->write(localBuffer);
     mSocket->flush();
 }
 
@@ -89,6 +106,7 @@ void Client::onDataChanged(QString modelIdentifier, QString id, const QVariant &
 ///Processing incoming msgs
 void Client::processSocketMsg(QByteArray const &msg)
 {
+    qDebug() << "Recieved message:" << msg;
     std::vector<QStringList*> paramsVector = divideMsg(msg);
     for(unsigned int i = 0; i < paramsVector.size(); i++) {
         QStringList* params = (QStringList*)paramsVector[i];

@@ -20,50 +20,65 @@ void Server::onNewConnection() {
     qDebug() << "New pending connection";
     QTcpSocket *socket = mServer->nextPendingConnection();
     if(socket->state() == QTcpSocket::ConnectedState) {
-        qDebug() << "Connection established with socket" << counter;
+        qDebug() << "Connection established with socket" << mCounter;
+        qDebug() << "Description: " << socket->localAddress() << socket->localPort() << " " << socket->peerAddress() << socket->peerPort();
 
-        SocketWrapper *wrapper = new SocketWrapper(counter, socket);
-        counter++;
+        SocketWrapper *wrapper = new SocketWrapper(mCounter, socket);
+        mCounter++;
 
         mSockets.push_back(wrapper);
 
-        connect(wrapper, SIGNAL(socketReady(int)), this, SLOT(onReadyRead(int)));
-        connect(wrapper, SIGNAL(socketClosed(int)), this, SLOT(onDisconnected(int)));
+        connect(wrapper, SIGNAL(socketReady(SocketWrapper&)), this, SLOT(onPendingMeaasge(SocketWrapper&)));
+        connect(wrapper, SIGNAL(socketClosed(SocketWrapper&)), this, SLOT(onDisconnected(SocketWrapper&)));
     }
 }
 
-void Server::onReadyRead(int id) {
-    QTcpSocket *socket = findWrapperById(id)->socket;
-    do {
-        QByteArray ba = socket->readLine();
-		//TODO записать в файл
-        printf(">> %i: %s\n", id, ba.constData());
-        foreach (SocketWrapper *wrapper, mSockets) {
-            if((int)wrapper->id != id) {
-                wrapper->socket->write(ba.constData());
-                wrapper->socket->flush();
-                printf("Sending to %i\n", wrapper->id);
-            }
-        }
-        fflush(stdout);
-    } while(socket->canReadLine());
-}
+//void Server::processLockRequest(int id) {
 
-void Server::onDisconnected(int id) {
-    SocketWrapper *wrapper = findWrapperById(id);
-    qDebug() << "Socket" << id << "Disconnected";
-    disconnect(wrapper, SIGNAL(socketReady(int)));
-    disconnect(wrapper, SIGNAL(socketClosed(int)));
-    wrapper->socket->deleteLater();
-    mSockets.erase(std::remove(mSockets.begin(), mSockets.end(), wrapper), mSockets.end());
-}
+//}
 
-SocketWrapper *Server::findWrapperById(int id) {
-    for(SocketWrapper *wrapper : mSockets) {
-        if((int)wrapper->id == id) {
-            return wrapper;
+void Server::onPendingMeaasge(SocketWrapper &wrapper) {
+    QByteArray message = wrapper.getFirstMessage();
+    printf(">> %i: %s\n", wrapper.id, message.constData());
+    foreach (SocketWrapper *anotherWrapper, mSockets) {
+        if(anotherWrapper->id != wrapper.id) {
+            anotherWrapper->socket->write(message.constData());
+            anotherWrapper->socket->flush();
+            printf("Sending to %i\n", anotherWrapper->id);
         }
     }
-    Q_ASSERT(false);
-    return NULL;
+
+
+
+//    QTcpSocket *socket = findWrapperById(id)->socket;
+//    do {
+//        QByteArray ba = socket->readLine();
+//        //TODO записать в файл
+//        if(ba.startsWith("elemLocked")) {
+//            /// lock request
+
+
+
+
+
+//        } else {
+//            printf(">> %i: %s\n", id, ba.constData());
+//            foreach (SocketWrapper *wrapper, mSockets) {
+//                if((int)wrapper->id != id) {
+//                    wrapper->socket->write(ba.constData());
+//                    wrapper->socket->flush();
+//                    printf("Sending to %i\n", wrapper->id);
+//                }
+//            }
+//        }
+//        fflush(stdout);
+//    } while(socket->canReadLine());
+}
+
+void Server::onDisconnected(SocketWrapper &wrapper) {
+    qDebug() << "Socket" << wrapper.id << "Disconnected";
+    disconnect(&wrapper, SIGNAL(socketReady(int)));
+    disconnect(&wrapper, SIGNAL(socketClosed(int)));
+    wrapper.socket->deleteLater();
+    mSockets.erase(std::remove(mSockets.begin(), mSockets.end(), &wrapper), mSockets.end());
 }

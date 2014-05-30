@@ -4,9 +4,9 @@
 #include <QtNetwork/QTcpServer>
 #include <QtNetwork/QTcpSocket>
 #include <QDebug>
+#include <qglobal.h>
 #include <cstdio>
 
-#include "common.h"
 #include "socketwrapper.h"
 
 class QTcpServer;
@@ -23,18 +23,22 @@ public:
 public slots:
 	
 	void onNewConnection();
-	void onReadyRead(int id);
-	void onDisconnected(int id);
+    void onPendingMeaasge(SocketWrapper &wrapper);
+    void onDisconnected(SocketWrapper &wrapper);
 	
 signals:
 	
 private:
+
+    const quint16 PORT = 1234;
+
 	QTcpServer *mServer;
 	std::vector<SocketWrapper*> mSockets;
 	
-	int counter = 0;
+    int mCounter = 0;
 	
 	SocketWrapper *findWrapperById(int id);
 	
+    QMap<int, QString> mLocks;
 	//TODO перенести сюда блокировки
 };

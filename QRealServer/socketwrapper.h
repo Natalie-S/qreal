@@ -11,12 +11,19 @@ public:
 	
     int id = 0;
     QTcpSocket *socket;
+
+    QByteArray getFirstMessage();
 	
 public slots:
 	void onReadyRead();
 	void onDisconnected();
 	
 signals:
-	void socketReady(int);
-	void socketClosed(int);
+    void socketReady(SocketWrapper&);
+    void socketClosed(SocketWrapper&);
+
+private:
+    QByteArray buffer;
+
+    quint16 getFirsMessageSize();
 };

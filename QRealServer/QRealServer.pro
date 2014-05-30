@@ -24,5 +24,4 @@ SOURCES += main.cpp \
 
 HEADERS += \
     server.h \
-    common.h \
     socketwrapper.h

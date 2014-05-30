@@ -98,6 +98,10 @@ class Client : public QObject
         QStringList* mLastMsg;
 //        QTextStream *mOutStream;
 //        QFile *mLogFile;
+
+        quint16 getFirsMessageSize();
+
+        QByteArray mBuffer;
 };
 
 }
