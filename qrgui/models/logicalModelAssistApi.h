@@ -72,6 +72,8 @@ public:
 
 public slots:
 	virtual void removeElement(Id const &logicalId);
+    void removeElement1(Id const &logicalId);
+
 signals:
     void logElemRemoved(QString const &buf);
 

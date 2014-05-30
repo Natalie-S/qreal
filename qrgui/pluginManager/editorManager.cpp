@@ -619,6 +619,41 @@ void EditorManager::deleteElement(MainWindow *mainWindow, Id const &id)
 	Q_UNUSED(id);
 }
 
+void EditorManager::deleteProperty1(QString const &propDisplayedName)
+{
+    Q_UNUSED(propDisplayedName);
+}
+
+void EditorManager::addProperty1(Id const &id, QString const &propDisplayedName)
+{
+    Q_UNUSED(id);
+    Q_UNUSED(propDisplayedName);
+
+}
+
+void EditorManager::updateProperties1(Id const &id, QString const &property, QString const &propertyType
+        , QString const &propertyDefaultValue, QString const &propertyDisplayedName)
+{
+    Q_UNUSED(id);
+    Q_UNUSED(property);
+    Q_UNUSED(propertyType);
+    Q_UNUSED(propertyDefaultValue);
+    Q_UNUSED(propertyDisplayedName);
+}
+
+void EditorManager::updateShape1(Id const &id, QString const &graphics)
+{
+    Q_UNUSED(id);
+    Q_UNUSED(graphics);
+
+}
+
+void EditorManager::deleteElement1(MainWindow *mainWindow, Id const &id)
+{
+    Q_UNUSED(mainWindow);
+    Q_UNUSED(id);
+}
+
 bool EditorManager::isRootDiagramNode(Id const &id) const
 {
 	Q_UNUSED(id);

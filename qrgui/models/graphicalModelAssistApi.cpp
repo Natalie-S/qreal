@@ -255,6 +255,14 @@ void GraphicalModelAssistApi::removeElement(const Id &graphicalId)
     emit graphicalElemRemoved(buf);
 }
 
+void GraphicalModelAssistApi::removeElement1(const Id &graphicalId)
+{
+    QPersistentModelIndex const index = indexById(graphicalId);
+    if (graphicalRepoApi().exist(graphicalId) && index.isValid()) {
+        mGraphicalModel.removeRow(index.row(), index.parent());
+    }
+}
+
 bool GraphicalModelAssistApi::hasLabel(Id const &graphicalId, int index)
 {
 	return mGraphicalPartModel.findIndex(graphicalId, index).isValid();

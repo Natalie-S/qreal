@@ -309,16 +309,16 @@ void MainWindow::connectAsClient()
 
     connect(mModels->getClient(), SIGNAL(diagramCreated(QString,Id,Id,Id,Id)), mStartWidget, SLOT(createDiagramFromClient(QString,Id,Id,Id,Id)));
 
-    connect(mModels->getClient(), SIGNAL(graphElemRemoved(Id)), &mModels->graphicalModelAssistApi(), SLOT(removeElement(Id)));
-    connect(mModels->getClient(), SIGNAL(logElemRemoved(Id)), &mModels->logicalModelAssistApi(), SLOT(removeElement(Id)));
+    connect(mModels->getClient(), SIGNAL(graphElemRemoved(Id)), &mModels->graphicalModelAssistApi(), SLOT(removeElement1(Id)));
+    connect(mModels->getClient(), SIGNAL(logElemRemoved(Id)), &mModels->logicalModelAssistApi(), SLOT(removeElement1(Id)));
 
-    connect(mModels->getClient(), SIGNAL(propDeleted(QString)), emi, SLOT(deleteProperty(QString)));
-    connect(mModels->getClient(), SIGNAL(propUpdated(Id,QString,QString,QString,QString)), emi, SLOT(updateProperties(Id,QString,QString,QString,QString)));
-    connect(mModels->getClient(), SIGNAL(shapeUpdated(Id,QString)), emi, SLOT(updateShape(Id,QString)));
+    connect(mModels->getClient(), SIGNAL(propDeleted(QString)), emi, SLOT(deleteProperty1(QString)));
+    connect(mModels->getClient(), SIGNAL(propUpdated(Id,QString,QString,QString,QString)), emi, SLOT(updateProperties1(Id,QString,QString,QString,QString)));
+    connect(mModels->getClient(), SIGNAL(shapeUpdated(Id,QString)), emi, SLOT(updateShape1(Id,QString)));
     connect(mModels->getClient(), SIGNAL(nodeAdded(Id,QString,bool,Id)), this, SLOT(addNodeFromClient(Id,QString,bool,Id)));
     connect(mModels->getClient(), SIGNAL(edgeAdded(Id,QString,QString,QString,QString,QString,QString,Id,Id)), this, SLOT(addEdgeFromClient(Id,QString,QString,QString,QString,QString,QString,Id,Id)));
     connect(mModels->getClient(), SIGNAL(elementDeleted(Id)), this, SLOT(deleteElementFromClient(Id)));
-    connect(mModels->getClient(), SIGNAL(propAdded(Id,QString)), emi, SLOT(addProperty(Id,QString)));
+    connect(mModels->getClient(), SIGNAL(propAdded(Id,QString)), emi, SLOT(addProperty1(Id,QString)));
 
 //    connect(this, SIGNAL(newChatMsg(QString)), mModels->getClient(), SLOT(onMetaModelChanged(QString)));
 //    connect(mModels->getClient(), SIGNAL(receivedChatMsg(QString,QString)), this, SLOT(onChatMsgReceived(QString,QString)));
@@ -344,7 +344,7 @@ void MainWindow::addEdgeFromClient(Id const &diagram, QString const &name, QStri
 void MainWindow::deleteElementFromClient(Id const &id)
 {
    EditorManagerInterface *emi = &(this->editorManager());
-   emi->deleteElement(this, id);
+   emi->deleteElement1(this, id);
    loadPlugins();
 }
 

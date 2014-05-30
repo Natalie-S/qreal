@@ -717,6 +717,19 @@ void InterpreterEditorManager::deletePropertyInElement(qrRepo::RepoApi *repo, Id
 	}
 }
 
+void InterpreterEditorManager::deleteProperty1(QString const &propDisplayedName)
+{
+    foreach (qrRepo::RepoApi * const repo, mEditorRepoApi.values()) {
+        foreach (Id const &editor, repo->elementsByType("MetamodelDiagram")) {
+            foreach (Id const &diagram, repo->children(editor)) {
+                if (repo->isLogicalElement(diagram)) {
+                    deletePropertyInElement(repo, editor, diagram, propDisplayedName);
+                }
+            }
+        }
+    }
+}
+
 void InterpreterEditorManager::deleteProperty(QString const &propDisplayedName)
 {
 	foreach (qrRepo::RepoApi * const repo, mEditorRepoApi.values()) {
@@ -732,6 +745,16 @@ void InterpreterEditorManager::deleteProperty(QString const &propDisplayedName)
 			}
 		}
 	}
+}
+
+void InterpreterEditorManager::addProperty1(Id const &id, QString const &propDisplayedName)
+{
+    QPair<qrRepo::RepoApi*, Id> const repoAndMetaIdPair = repoAndMetaId(id);
+    Id const newId = Id(repoAndMetaIdPair.second.editor(), repoAndMetaIdPair.second.diagram()
+            , "MetaEntity_Attribute", QUuid::createUuid().toString());
+    repoAndMetaIdPair.first->addChild(repoAndMetaIdPair.second, newId);
+    repoAndMetaIdPair.first->setProperty(newId, "name", propDisplayedName);
+    repoAndMetaIdPair.first->setProperty(newId, "displayedName", propDisplayedName);
 }
 
 void InterpreterEditorManager::addProperty(Id const &id, QString const &propDisplayedName)
@@ -752,6 +775,22 @@ void InterpreterEditorManager::setProperty(qrRepo::RepoApi *repo, Id const &id
 		, QString const &property, QVariant const &propertyValue) const
 {
 	repo->setProperty(id, property, propertyValue);
+}
+
+void InterpreterEditorManager::updateProperties1(Id const &id, QString const &property, QString const &propertyType
+        , QString const &propertyDefaultValue, QString const &propertyDisplayedName)
+{
+    QPair<qrRepo::RepoApi*, Id> const repoAndMetaIdPair = repoAndMetaId(id);
+    Id propertyMetaId;
+    foreach (Id const &propertyId, repoAndMetaIdPair.first->children(repoAndMetaIdPair.second)) {
+        if (propertyId.element() == "MetaEntity_Attribute" && repoAndMetaIdPair.first->name(propertyId) == property) {
+            propertyMetaId = propertyId;
+        }
+    }
+
+    setProperty(repoAndMetaIdPair.first, propertyMetaId, "attributeType", propertyType);
+    setProperty(repoAndMetaIdPair.first, propertyMetaId, "defaultValue", propertyDefaultValue);
+    setProperty(repoAndMetaIdPair.first, propertyMetaId, "displayedName", propertyDisplayedName);
 }
 
 void InterpreterEditorManager::updateProperties(Id const &id, QString const &property, QString const &propertyType
@@ -821,6 +860,14 @@ QString InterpreterEditorManager::shape(Id const &id) const
 	return "";
 }
 
+void InterpreterEditorManager::updateShape1(Id const &id, QString const &graphics)
+{
+    QPair<qrRepo::RepoApi*, Id> const repoAndMetaIdPair = repoAndMetaId(id);
+    if (repoAndMetaIdPair.second.element() == "MetaEntityNode") {
+        repoAndMetaIdPair.first->setProperty(repoAndMetaIdPair.second, "shape", graphics);
+    }
+}
+
 void InterpreterEditorManager::updateShape(Id const &id, QString const &graphics)
 {
 //    qDebug() << "alive" ;
@@ -833,6 +880,20 @@ void InterpreterEditorManager::updateShape(Id const &id, QString const &graphics
         emit metaModelChanged(params.join("|") + "|");
 //        qDebug() << "interp" << params.join("|") + "|";
 	}
+}
+
+void InterpreterEditorManager::deleteElement1(MainWindow *mainWindow, Id const &id)
+{
+    QPair<qrRepo::RepoApi*, Id> const repoAndMetaIdPair = repoAndMetaId(id);
+    qrRepo::RepoApi * const repo = repoAndMetaIdPair.first;
+    Id const metaId = repoAndMetaIdPair.second;
+    IdList const logicalIdList = mainWindow->models()->logicalRepoApi().logicalElements(id.type());
+    foreach (Id const &logicalId, logicalIdList) {
+        QModelIndex const index = mainWindow->models()->logicalModelAssistApi().indexById(logicalId);
+        mainWindow->models()->logicalModel()->removeRow(index.row(), index.parent());
+    }
+    repo->removeChild(repo->parent(metaId), metaId);
+    repo->removeElement(metaId);
 }
 
 void InterpreterEditorManager::deleteElement(MainWindow *mainWindow, Id const &id)
@@ -1055,7 +1116,6 @@ QPair<Id, Id> InterpreterEditorManager::createEditorAndDiagram(QString const &na
     QStringList params;
     params << "diagrCr" << name << editor.toString() << diagram.toString() << nodeId.toString() <<containerLink.toString();
     emit metaModelChanged(params.join("|") + "|");
-//    qDebug() << params.join("|") + "|";
     return qMakePair(Id(repo->name(editor)), Id(repo->name(editor), repo->name(diagram)));
 }
 

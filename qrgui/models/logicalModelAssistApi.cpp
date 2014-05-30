@@ -209,12 +209,21 @@ void LogicalModelAssistApi::removeReference(Id const &id, Id const &reference)
 
 void LogicalModelAssistApi::removeElement(Id const &logicalId)
 {
-	QPersistentModelIndex const index = indexById(logicalId);
-	if (logicalRepoApi().exist(logicalId) && index.isValid()) {
-		removeReferencesTo(logicalId);
-		mLogicalModel.removeRow(index.row(), index.parent());
+    QPersistentModelIndex const index = indexById(logicalId);
+    if (logicalRepoApi().exist(logicalId) && index.isValid()) {
+        removeReferencesTo(logicalId);
+        mLogicalModel.removeRow(index.row(), index.parent());
     }
 
     QString buf = "logElemRemoved|" + logicalId.toString() + "|";
     emit logElemRemoved(buf);
+}
+
+void LogicalModelAssistApi::removeElement1(Id const &logicalId)
+{
+    QPersistentModelIndex const index = indexById(logicalId);
+    if (logicalRepoApi().exist(logicalId) && index.isValid()) {
+        removeReferencesTo(logicalId);
+        mLogicalModel.removeRow(index.row(), index.parent());
+    }
 }

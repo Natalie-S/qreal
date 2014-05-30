@@ -107,6 +107,13 @@ signals:
     void metaModelChanged(QString const &params);
 
 public slots:
+    virtual void deleteProperty1(QString const &propDisplayedName) = 0;
+    virtual void addProperty1(Id const &id, QString const &propDisplayedName) = 0;
+    virtual void updateProperties1(Id const &id, QString const &property, QString const &propertyType
+            , QString const &propertyDefaultValue, QString const &propertyDisplayedName) = 0;
+    virtual void updateShape1(Id const &id, QString const &graphics) = 0;
+    virtual void deleteElement1(MainWindow *mainWindow, Id const &id) = 0;
+
     virtual QPair<Id, Id> createEditorAndDiagram(QString const &name) = 0;
     virtual void deleteProperty(QString const &propDisplayedName) = 0;
     virtual void addProperty(Id const &id, QString const &propDisplayedName) = 0;

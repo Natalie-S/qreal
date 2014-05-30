@@ -121,6 +121,12 @@ public slots:
      void addNodeElementFromClient(Id const &diagram, QString const &name, bool isRootDiagramNode, Id const &nodeId);
      QPair<Id, Id> createEditorAndDiagramFromClient(QString const &name, Id const &editor, Id const &diagram, Id const nodeId, Id const containerLink);
 
+     void deleteProperty1(QString const &propDisplayedName) override;
+     void addProperty1(Id const &id, QString const &propDisplayedName) override;
+     void updateProperties1(Id const &id, QString const &property, QString const &propertyType
+             , QString const &propertyDefaultValue, QString const &propertyDisplayedName) override;
+     void updateShape1(Id const &id, QString const &graphics) override;
+     void deleteElement1(MainWindow *mainWindow, Id const &id) override;
 
 private:
 	QStringList mPluginsLoaded;

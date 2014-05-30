@@ -85,16 +85,10 @@ public:
 	QString diagramNodeName(QString const &editor, QString const &diagram) const override;
 	bool isInterpretationMode() const override;
 
-	bool isParentProperty(Id const &id, QString const &propertyName) const override;
-//    void deleteProperty(QString const &propDisplayedName) override;
-//    void addProperty(Id const &id, QString const &propDisplayedName) override;
-//	void updateProperties(Id const &id, QString const &property, QString const &propertyType
-//            , QString const &propertyDefaultValue, QString const &propertyDisplayedName) override;
+    bool isParentProperty(Id const &id, QString const &propertyName) const override;
 	QString propertyNameByDisplayedName(Id const &id, QString const &displayedPropertyName) const override;
 	IdList children(Id const &parent) const override;
-	QString shape(Id const &id) const override;
-//    void updateShape(Id const &id, QString const &graphics) override;
-//    void deleteElement(qReal::MainWindow *mainWindow, Id const &id) override;
+    QString shape(Id const &id) const override;
 	bool isRootDiagramNode(Id const &id) const override;
 
 
@@ -143,6 +137,13 @@ public slots:
             , QString const &propertyDefaultValue, QString const &propertyDisplayedName) override;
     void updateShape(Id const &id, QString const &graphics) override;
     void deleteElement(MainWindow *mainWindow, Id const &id) override;
+    void deleteProperty1(QString const &propDisplayedName) override;
+    void addProperty1(Id const &id, QString const &propDisplayedName) override;
+    void updateProperties1(Id const &id, QString const &property, QString const &propertyType
+            , QString const &propertyDefaultValue, QString const &propertyDisplayedName) override;
+    void updateShape1(Id const &id, QString const &graphics) override;
+    void deleteElement1(MainWindow *mainWindow, Id const &id) override;
+
     QString addNodeElement(Id const &diagram, QString const &name, bool isRootDiagramNode) override;
     QString addEdgeElement(Id const &diagram, QString const &name, QString const &labelText
             , QString const &labelType, QString const &lineType, QString const &beginType

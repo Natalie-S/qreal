@@ -131,6 +131,7 @@ public:
 
 public slots:
     void removeElement(Id const &graphicalId);
+    void removeElement1(const Id &graphicalId);
 
 signals:
 	void nameChanged(Id const &id);

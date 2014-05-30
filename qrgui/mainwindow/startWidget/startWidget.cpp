@@ -329,8 +329,7 @@ void StartWidget::createInterpretedDiagram()
 		mMainWindow->addEditorElementsToPalette(editorAndDiagram.first, editorAndDiagram.second);
 		mMainWindow->models()->repoControlApi().exterminate();
 		mMainWindow->models()->reinit();
-		mMainWindow->loadPlugins();
-//        emit diagramCreated(name);
+        mMainWindow->loadPlugins();
 	} else {
 		show();
 		editorManagerProxy.setProxyManager(new EditorManager());

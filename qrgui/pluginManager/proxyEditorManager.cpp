@@ -224,24 +224,32 @@ bool ProxyEditorManager::isParentProperty(Id const &id, QString const &propertyN
 {
 	return mProxiedEditorManager->isParentProperty(id, propertyName);
 }
+void ProxyEditorManager::deleteProperty1(QString const &propDisplayedName)
+{
+    mProxiedEditorManager->deleteProperty1(propDisplayedName);
+}
 
 void ProxyEditorManager::deleteProperty(QString const &propDisplayedName)
 {
     QObject::connect(mProxiedEditorManager, SIGNAL(metaModelChanged(QString)), this, SIGNAL(metaModelChanged(QString)));
-	mProxiedEditorManager->deleteProperty(propDisplayedName);
-//    QStringList params;
-//    params << "delProp" << propDisplayedName;
-//    emit metaModelChanged(params.join("|") + "|");
-//    qDebug() << "proxy:    " << params.join("|") + "|";
+    mProxiedEditorManager->deleteProperty(propDisplayedName);
+}
+
+void ProxyEditorManager::addProperty1(Id const &id, QString const &propDisplayedName)
+{
+    mProxiedEditorManager->addProperty1(id, propDisplayedName);
 }
 
 void ProxyEditorManager::addProperty(Id const &id, QString const &propDisplayedName)
 {
     QObject::connect(mProxiedEditorManager, SIGNAL(metaModelChanged(QString)), this, SIGNAL(metaModelChanged(QString)));
-	mProxiedEditorManager->addProperty(id, propDisplayedName);
-//    QStringList params;
-//    params << "addProp" << id.toString() << propDisplayedName;
-//    emit metaModelChanged(params.join("|") + "|");
+    mProxiedEditorManager->addProperty(id, propDisplayedName);
+}
+
+void ProxyEditorManager::updateProperties1(Id const &id, QString const &property, QString const &propertyType
+        , QString const &propertyDefaultValue, QString const &propertyDisplayedName)
+{
+    mProxiedEditorManager->updateProperties1(id, property, propertyType, propertyDefaultValue, propertyDisplayedName);
 }
 
 void ProxyEditorManager::updateProperties(Id const &id, QString const &property, QString const &propertyType
@@ -249,9 +257,6 @@ void ProxyEditorManager::updateProperties(Id const &id, QString const &property,
 {
     QObject::connect(mProxiedEditorManager, SIGNAL(metaModelChanged(QString)), this, SIGNAL(metaModelChanged(QString)));
 	mProxiedEditorManager->updateProperties(id, property, propertyType, propertyDefaultValue, propertyDisplayedName);
-//    QStringList params;
-//    params << "updProp" << id.toString() << property << propertyType << propertyDefaultValue << propertyDisplayedName;
-//    emit metaModelChanged(params.join("|") + "|");
 }
 
 QString ProxyEditorManager::propertyNameByDisplayedName(Id const &id, QString const &displayedPropertyName) const
@@ -269,22 +274,29 @@ QString ProxyEditorManager::shape(Id const &id) const
 	return mProxiedEditorManager->shape(id);
 }
 
+void ProxyEditorManager::updateShape1(Id const &id, QString const &graphics)
+{
+    mProxiedEditorManager->updateShape1(id, graphics);
+}
+
 void ProxyEditorManager::updateShape(Id const &id, QString const &graphics)
 {
     QObject::connect(mProxiedEditorManager, SIGNAL(metaModelChanged(QString)), this, SIGNAL(metaModelChanged(QString)));
-	mProxiedEditorManager->updateShape(id, graphics);    
-//    QStringList params;
-//    params << "updShape" << id.toString() << graphics;
-//    emit metaModelChanged(params.join("|") + "|");
-//    qDebug() << "proxy" << params.join("|") + "|";
+    mProxiedEditorManager->updateShape(id, graphics);
+}
+
+void ProxyEditorManager::deleteElement1(MainWindow *mainWindow, Id const &id)
+{
+    mProxiedEditorManager->deleteElement1(mainWindow, id);
 }
 
 void ProxyEditorManager::deleteElement(MainWindow *mainWindow, Id const &id)
 {
+    QObject::connect(mProxiedEditorManager, SIGNAL(metaModelChanged(QString)), this, SIGNAL(metaModelChanged(QString)));
 	mProxiedEditorManager->deleteElement(mainWindow, id);
-    QStringList params;
-    params << "delElem" << id.toString();
-    emit metaModelChanged(params.join("|") + "|");
+//    QStringList params;
+//    params << "delElem" << id.toString();
+//    emit metaModelChanged(params.join("|") + "|");
 }
 
 bool ProxyEditorManager::isRootDiagramNode(Id const &id) const
